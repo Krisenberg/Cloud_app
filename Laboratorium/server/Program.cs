@@ -1,9 +1,12 @@
 //using Microsoft.IdentityModel.Tokens;
+using server.DataService;
+using server.Hubs;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSignalR();
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -14,17 +17,20 @@ var allowedOrigin = builder.Configuration.GetSection("AllowedOrigins").Get<strin
 // Add services to the container.
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("myAppCors", policy =>
+    options.AddPolicy("reactFrontend", policy =>
     {
         policy.WithOrigins(allowedOrigin)
                 .AllowAnyHeader()
-                .AllowAnyMethod();
+                .AllowAnyMethod()
+                .AllowCredentials(); ;
     });
 });
 
+builder.Services.AddSingleton<GameDb>();
+
 var app = builder.Build();
 
-app.UseCors("myAppCors");
+app.UseCors("reactFrontend");
 
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
@@ -53,6 +59,7 @@ app.MapPost("/signup", (UserData userData) =>
     return Results.Ok(user);
 });
 
+app.MapHub<GameHub>("/game");
 app.Run();
 
 class UserData
@@ -92,9 +99,52 @@ class User
 
 }
 
-class Game
+public enum GameState
 {
-    public Guid User1ID { get; set; }
-    public Guid User2ID { get; set; }
-    public required string GameState { get; set; }
+    Queued = 0,
+    Started = 1,
+    User1Won = 2,
+    User2Won = 3,
+    Draw = 4
+}
+
+public class Game
+{
+    public Guid GameID { get; set; }
+    public string? Username1 { get; set; }
+    public string? Username2 { get; set; }
+    public Dictionary<int, string?> BoardState { get; set; }
+    public GameState GameState { get; set; }
+
+    public Game(string username1)
+    {
+        GameID = Guid.NewGuid();
+        Username1 = username1;
+        Username2 = null;
+        BoardState = new Dictionary<int, string?>();
+        for (int i = 0; i < 9; i++)
+        {
+            BoardState.Add(i, null);
+        }
+        GameState = GameState.Queued;
+    }
+
+    public void StartGame(string username2)
+    {
+        Username2 = username2;
+        GameState = GameState.Started;
+    }
+
+    public GameState SetMoveMark(int movePosition, string user)
+    {
+        if (movePosition >= 0 && movePosition < BoardState.Count)
+        {
+            if (BoardState[movePosition] == null)
+            {
+                BoardState[movePosition] = user;
+                return GameState.Started;
+            }
+        }
+        return GameState.Draw;
+    }
 }

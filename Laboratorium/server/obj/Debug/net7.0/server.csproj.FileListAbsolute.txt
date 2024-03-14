@@ -32,3 +32,10 @@ C:\Users\Kris\Documents\Studia\Semestr_VI\Programowanie_chmura\Laboratorium\serv
 C:\Users\Kris\Documents\Studia\Semestr_VI\Programowanie_chmura\Laboratorium\server\obj\Debug\net7.0\server.genruntimeconfig.cache
 C:\Users\Kris\Documents\Studia\Semestr_VI\Programowanie_chmura\Laboratorium\server\obj\Debug\net7.0\ref\server.dll
 C:\Users\Kris\Documents\Studia\Semestr_VI\Programowanie_chmura\Laboratorium\server\bin\Debug\net7.0\BCrypt.Net-Next.dll
+C:\Users\Kris\Documents\Studia\Semestr_VI\Programowanie_chmura\Laboratorium\server\bin\Debug\net7.0\Microsoft.AspNet.SignalR.Core.dll
+C:\Users\Kris\Documents\Studia\Semestr_VI\Programowanie_chmura\Laboratorium\server\bin\Debug\net7.0\Microsoft.AspNet.SignalR.SystemWeb.dll
+C:\Users\Kris\Documents\Studia\Semestr_VI\Programowanie_chmura\Laboratorium\server\bin\Debug\net7.0\Microsoft.Owin.dll
+C:\Users\Kris\Documents\Studia\Semestr_VI\Programowanie_chmura\Laboratorium\server\bin\Debug\net7.0\Microsoft.Owin.Host.SystemWeb.dll
+C:\Users\Kris\Documents\Studia\Semestr_VI\Programowanie_chmura\Laboratorium\server\bin\Debug\net7.0\Microsoft.Owin.Security.dll
+C:\Users\Kris\Documents\Studia\Semestr_VI\Programowanie_chmura\Laboratorium\server\bin\Debug\net7.0\Newtonsoft.Json.dll
+C:\Users\Kris\Documents\Studia\Semestr_VI\Programowanie_chmura\Laboratorium\server\bin\Debug\net7.0\Owin.dll
