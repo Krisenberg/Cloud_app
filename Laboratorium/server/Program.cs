@@ -9,7 +9,22 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var allowedOrigin = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
+
+// Add services to the container.
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("myAppCors", policy =>
+    {
+        policy.WithOrigins(allowedOrigin)
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
+
+app.UseCors("myAppCors");
 
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
@@ -18,10 +33,10 @@ var app = builder.Build();
 //    app.UseSwaggerUI();
 //}
 
-app.UseSwagger();
-app.UseSwaggerUI();
+//app.UseSwagger();
+//app.UseSwaggerUI();
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 //var game = new Game { User1ID = Guid.NewGuid(), User2ID = Guid.NewGuid(), GameState = "000000000" };
 var users = new List<User>();
@@ -33,15 +48,9 @@ app.MapGet("/users", () =>
 
 app.MapPost("/signup", (UserData userData) =>
 {
-    try
-    {
-        User user = new User(userData.Username, userData.Password);
-        users.Add(user);
-        return Results.Ok("Account created");
-    } catch(Exception ex)
-    {
-        return Results.BadRequest(ex);
-    }
+    User user = new User(userData.Username, userData.Password);
+    users.Add(user);
+    return Results.Ok(user);
 });
 
 app.Run();

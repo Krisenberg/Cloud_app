@@ -6,12 +6,13 @@ function SignUp() {
     const cookies = new Cookies()
     const [user, setUser] = useState(null)
     const signUp = () => {
+        console.log(user)
         Axios.post("https://localhost:44310/signup", user).then(res => {
-            const { token, username, hashedPassword } = res.data;
+            const { userID, username, password } = res.data;
 
-            cookies.set("token", token);
+            cookies.set("userID", userID);
             cookies.set("username", username);
-            cookies.set("hashedPassword", hashedPassword);
+            cookies.set("password", password);
         })
     };
 
