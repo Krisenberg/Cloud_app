@@ -7,7 +7,7 @@ import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
 import WaitingRoom from './components/WaitingRoom';
 import {useState} from 'react'
 import Game from './components/Game';
-import Cookies from "universal-cookie"
+import Cookies from "universal-cookie";
 
 function App() {
   // return (
