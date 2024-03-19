@@ -1,4 +1,6 @@
-﻿namespace server.DataService
+﻿using server.Models;
+
+namespace server.DataService
 {
     public class GameDb
     {

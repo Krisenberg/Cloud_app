@@ -31,55 +31,64 @@ const Board = ({ playerMark, conn, username}) => {
                 chooseSquare={() => {
                     chooseSquare(0);
                 }}
-                val={board[0]}>
+                val={board[0]}
+                playerTurn={turn === playerMark}>
             </Square>
             <Square
                 chooseSquare={() => {
                     chooseSquare(1);
                 }}
-                val={board[1]}>
+                val={board[1]}
+                playerTurn={turn === playerMark}>
             </Square>
             <Square
                 chooseSquare={() => {
                     chooseSquare(2);
                 }}
-                val={board[2]}>
+                val={board[2]}
+                playerTurn={turn === playerMark}>
             </Square>
             <Square
                 chooseSquare={() => {
                     chooseSquare(3);
                 }}
-                val={board[3]}>
+                val={board[3]}
+                playerTurn={turn === playerMark}>
             </Square>
             <Square
                 chooseSquare={() => {
                     chooseSquare(4);
                 }}
-                val={board[4]}>
+                val={board[4]}
+                playerTurn={turn === playerMark}>
             </Square>
             <Square
                 chooseSquare={() => {
                     chooseSquare(5);
                 }}
-                val={board[5]}>
+                val={board[5]}
+                playerTurn={turn === playerMark}>
             </Square>
             <Square
                 chooseSquare={() => {
                     chooseSquare(6);
                 }}
-                val={board[6]}>
+                val={board[6]}
+                playerTurn={turn === playerMark}>
             </Square>
             <Square
                 chooseSquare={() => {
                     chooseSquare(7);
                 }}
-                val={board[7]}>
+                val={board[7]}
+                playerTurn={turn === playerMark}>
             </Square>
             <Square
                 chooseSquare={() => {
                     chooseSquare(8);
                 }}
-                val={board[8]}>
+                val={board[8]}
+                playerTurn={turn === playerMark}>
             </Square>
             {/* <div className="row">
                 <Square val={board[0]}></Square>

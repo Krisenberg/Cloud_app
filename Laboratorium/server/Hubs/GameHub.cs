@@ -18,11 +18,11 @@ namespace server.Hubs
 
             if (joinedGame != null && joinedGame.GameState == GameState.Started)
             {
-                await Clients.Group(joinedGame.GameID.ToString()).SendAsync("JoinGame", true, $"{username} has joined [{joinedGame.GameID.ToString()}]. Game - {joinedGame.Username1} vs {joinedGame.Username2}");
+                await Clients.Group(joinedGame.GameID.ToString()).SendAsync("JoinGame", true, joinedGame.Username1, joinedGame.Username2, $"{username} has joined [{joinedGame.GameID.ToString()}]. Game - {joinedGame.Username1} vs {joinedGame.Username2}");
             }
             else
             {
-                await Clients.Group(joinedGame.GameID.ToString()).SendAsync("JoinGame", false, $"{username} has joined [{joinedGame.GameID.ToString()}]. Game - {joinedGame.Username1} vs {joinedGame.Username2}");
+                await Clients.Group(joinedGame.GameID.ToString()).SendAsync("JoinGame", false, joinedGame.Username1, joinedGame.Username2, $"{username} has joined [{joinedGame.GameID.ToString()}]. Game - {joinedGame.Username1} vs {joinedGame.Username2}");
             }
         }
 
@@ -31,10 +31,14 @@ namespace server.Hubs
             Game? userGame = _gameDb.GetGameByUsername(username);
             if (userGame != null)
             {
-                GameState newGameState = userGame!.SetMoveMark(movePosition, username);
-                if (newGameState == GameState.Started)
+                GameState updatedGameState = userGame!.SetMoveMark(movePosition, username);
+                if (updatedGameState == GameState.Started)
                 {
                     await Clients.Group(userGame.GameID.ToString()).SendAsync("SetMove", movePosition);
+                }
+                if (updatedGameState == GameState.Finished)
+                {
+                    await Clients.Group(userGame.GameID.ToString()).SendAsync("FinishGame", userGame!.Winner);
                 }
             }
         }
