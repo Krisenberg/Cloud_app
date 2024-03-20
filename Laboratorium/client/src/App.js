@@ -33,6 +33,7 @@ function App() {
                     .withUrl("http://localhost:5244/game")
                     .configureLogging(LogLevel.Information)
                     .build();
+      setConnection(conn);
       conn.on("JoinGame", (hasGameStarted, username1, username2, msg) => {
         console.log("has game started: ", hasGameStarted, "msg: ", msg);
         setGameStatus(hasGameStarted);
@@ -64,8 +65,6 @@ function App() {
       await conn.invoke("JoinGame", username);
       setPlayerUsername(username);
       cookies.set("username", username);
-
-      setConnection(conn);
     } catch(e) {
       console.log(e);
     }
