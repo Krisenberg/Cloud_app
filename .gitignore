@@ -685,3 +685,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+server/obj/Debug
+.fake
+node_modules
+.vscode
