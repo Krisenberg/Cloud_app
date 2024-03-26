@@ -1,0 +1,13 @@
+Zasób pochodzi od dostawcy, przykładowo aws_db_instance pochodzący od AWS-a
+zapewnia zasoby dla instancji RDS. Zasoby mogą być tworzone, modyfikowane i usuwane.
+
+Moduł zasobów (resource module) jest kolekcją powiązanych zasobów, które razem odpowiedzialne
+są za pewne akcje. Przykładowo moduł AWS VPC Terraform module odpowiada za tworzenie prywatnej
+sieci chmurowej, podsieci, bram NAT itp. Moduł ten zależny jest od dostarczonej konfiguracji,
+która może być zdefiniowana w samym module lub w wyższych strukturach (czyli np. w module infrastruktury).
+
+Moduł infrastruktury (infrastructure module) jest kolekcją opisanych wyżej modułów zasobów, które nie muszą
+być ściśle powiązane logicznie, ale służą do tego samego celu w danym kontekście. Definiowana tutaj konfiguracja
+jest przekazywana niżej do modułów zasobów i samych zasobów. Jako przykład można wspomnieć o module terraform-aws-cloudquery,
+gdzie różne moduły odpowiedzialne są za zarządzanie infrastrukturą oraz za używanie zasobów Dockera do budowania i wdrażania
+obrazów Dockerowych.
