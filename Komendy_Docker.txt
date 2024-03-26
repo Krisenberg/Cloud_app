@@ -21,3 +21,5 @@ Wylistowanie uruchomionych kontenerów: docker container ps
 Wypisanie logów danego kontenera: docker logs <nazwa_kontenera>
 			      np: docker logs 303a1e1f3fbce87078ed1ea4a89c014888593d695d8e30e12a33f4da6c548c3d
 
+Uruchomienie/zatrzymanie kontenerów zdefiniowanych w docker-compose: docker compose up / docker compose down
+
