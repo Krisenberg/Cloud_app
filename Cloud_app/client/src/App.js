@@ -80,7 +80,7 @@ function App() {
             <Col sm={12}>
               <hr></hr>
               <h2>Hi {playerUsername},</h2>
-              <h2>waiting for the opponent...</h2>
+              <h2>please wait for the opponent...</h2>
             </Col>
         </Row>
       )

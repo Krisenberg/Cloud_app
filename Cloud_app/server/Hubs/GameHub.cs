@@ -12,7 +12,6 @@ namespace server.Hubs
 
         public async Task JoinGame(string username)
         {
-            //UserConnection connection = new UserConnection(username);
             Game joinedGame = _gameDb.AddPlayer(username);
             await Groups.AddToGroupAsync(Context.ConnectionId, joinedGame.GameID.ToString());
 

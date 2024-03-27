@@ -44,7 +44,6 @@ app.UseCors("reactFrontend");
 
 app.UseHttpsRedirection();
 
-//var game = new Game { User1ID = Guid.NewGuid(), User2ID = Guid.NewGuid(), GameState = "000000000" };
 var users = new List<User>();
 
 app.MapGet("/users", () =>
