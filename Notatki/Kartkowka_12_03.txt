@@ -1,9 +1,0 @@
-Mechanizm Docker Cache związany jest z warstwowością obrazów Dockerowych. Każda instrukcja z pliku DockerFile tworzy kolejną warstwę obrazu, a każda kolejna warstwa zostaje nałożona na dotychczas zbudowany obraz, który powstaje inkrementacyjnie. W celu zoptymalizowania procesu budowania obrazu kolejne warstwy zostają cache'owane, dzięki czemu w przypadku ponownego budowania obrazu Dockera zostanie wykonane maksymalnie tyle kroków (warstw) co przy pierwszym podejściu [o ile objętościowo nie zmienił się plik Dockerfile, a jedynie modyfikacji uległy niektóre instrukcje], jednak w praktyce proces ten będzie znacznie krótszy, ponieważ wszystkie instrukcje, które się nie zmieniły, a które znajdują się przed pierwszą zmodyfikowaną linią wykorzystają zapisaną w pamięci (cache) warstwę, co znacznie skróci i uprości proces tworzenia obrazu. Innymi słowy - dzięki temu mechanizmowi mamy pewność, że obraz Dockerowy wykona jedynie tyle instrukcji, ile faktycznie jest konieczne.
-
-
-
-Czasem cahce może okazać się problematyczny - np. gdy w pliku Dockerfile instalujemy bash'a, to teoretycznie nie potrzebujemy tej instalacji przy kolejnym budowaniu obrazu, ale może się okazać, że pakiet bash został zaktualizowany w Alpine Linux po wykryciu jakiejś podatności. Wówczas możemy użyć instrukcji/flagi --no-cache, aby wymusić nieużywanie mechanizmu cache'owania.
-
-
-
-Nie jest to jednak rozwiązanie idealne - przy takiej fladze za każdym razem obraz budowany jest całkowicie od początku. Możemy więc poszukać innych rozwiązań, które przykładowo będą modyfikować tylko linię z konkretną instrukcją tak, aby "zablokować" używanie zapamiętanej wersji  (warstwy) we właściwym miejscu (są różne metody, np. gotowe one-linery, które pozwalają wygodnie przy instrukcji budowania obrazu precyzować, że gdzieś ma zostać użyty mechanizm cache busting).

@@ -1,8 +1,0 @@
-UWAGA - baza danych tak, aby było wygodnie. Np. 1 tabela. Nie tak żeby była znormalizowa, atomowa itp.
-Jest tutorial na ePortalu o tym jak krok po kroku to zrobić. Najlepiej z wykorzystaniem właśnie Pythona.
-
-2 moduły - backend + frontend. Jeśli korzystamy z IDków - GUID!!! Wtedy możemy uniknąć problemów.
-Czas - UNIX epoch. Bo na AWSie nie będzie wiadomo jakie jest przesunięcie czasowe. UNIX epoch sam zrobi
-"Wyrównanie" i będzie działać ładnie.
-
-Mamy 2 klientów - frontend. Jest serwer. Możemy zrobić tak, że oni komunikują się z serwerem
