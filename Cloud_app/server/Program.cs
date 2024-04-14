@@ -17,6 +17,8 @@ var allowedOrigin = builder.Configuration.GetSection("AllowedOrigins").Get<strin
 // Add services to the container.
 builder.Services.AddCors(options =>
 {
+    // options.AddPolicy("test", policy =>
+    //     policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials());
     options.AddPolicy("reactFrontend", policy =>
     {
         policy.WithOrigins(allowedOrigin)
@@ -45,6 +47,7 @@ app.UseCors("reactFrontend");
 app.UseHttpsRedirection();
 
 var users = new List<User>();
+users.Add(new User("Jas", "Fasola"));
 
 app.MapGet("/users", () =>
 {

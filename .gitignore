@@ -690,3 +690,12 @@ server/obj/Debug
 .fake
 node_modules
 .vscode
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+
+# keys
+*.pem
+*.ppk

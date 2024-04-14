@@ -31,12 +31,12 @@ function App() {
     try {
 
       const conn = new HubConnectionBuilder()
-                    .withUrl("http://10.0.0.26:5244/game")
+                    .withUrl("http://52.2.242.132:5244/game")
                     .configureLogging(LogLevel.Information)
                     .build();
       setConnection(conn);
       conn.on("JoinGame", (hasGameStarted, username1, username2, msg) => {
-        console.log("has game started: ", hasGameStarted, "msg: ", msg);
+        console.log("Has game started: ", hasGameStarted, "msg: ", msg);
         setGameStatus(hasGameStarted);
         if (username === username1){
           setPlayerUsername(username1)
