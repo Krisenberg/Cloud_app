@@ -29,8 +29,9 @@ function App() {
 
   const joinGame = async(username) => {
     try {
+
       const conn = new HubConnectionBuilder()
-                    .withUrl("http://localhost:5244/game")
+                    .withUrl("http://10.0.0.26:5244/game")
                     .configureLogging(LogLevel.Information)
                     .build();
       setConnection(conn);
