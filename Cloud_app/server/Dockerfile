@@ -14,18 +14,18 @@ WORKDIR /app
 
 #Start with the base image, for your Docker container, which is specified as mcr.microsoft.com/dotnet/sdk:7.0.
 #This image uses the official.NET Core SDK 7.0, as its starting point.
-#To later refer to this stage it is given the alias “build”.
+#To later refer to this stage it is given the alias ï¿½buildï¿½.
 
 #Next set the working directory within the container to /src.
 #This is where your application files will be copied and built.
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 #To copy the project files (*.csproj) from your computer to the /app directory in the container you need to use
-#the command “COPY *.csproj./”. This step is separated from the one to optimize Docker’s layer caching.
+#the command ï¿½COPY *.csproj./ï¿½. This step is separated from the one to optimize Dockerï¿½s layer caching.
 #It ensures that when there are changes in your project file the subsequent steps will be executed.
 COPY ["server.csproj", "."]
-#To restore the project’s dependencies and make sure that all required packages are downloaded and available,
-#for building the application you can use the command “RUN dotnet restore”.
+#To restore the projectï¿½s dependencies and make sure that all required packages are downloaded and available,
+#for building the application you can use the command ï¿½RUN dotnet restoreï¿½.
 #This command will take care of restoring all dependencies.
 RUN dotnet restore "./server.csproj"
 #Next, Copy the remaining source code and files from the local directory to the app directory
@@ -43,6 +43,7 @@ WORKDIR /app
 #This ensures that only necessary features are added to the final runtime image.
 COPY --from=build /app/build ./
 #This line specifies that the container will expose port 80
+ENV FRONTEND_IP=${FRONTEND_IP}
 EXPOSE 80
 #Specifies the command to be executed when an object based on this image is started.
 #In this case, it creates .NET Core Web API Application by calling the dotnet server.dll

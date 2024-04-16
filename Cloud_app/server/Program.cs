@@ -21,10 +21,15 @@ builder.Services.AddCors(options =>
     //     policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials());
     options.AddPolicy("reactFrontend", policy =>
     {
-        policy.WithOrigins(allowedOrigin)
+        // policy.WithOrigins(allowedOrigin)
+        //         .AllowAnyHeader()
+        //         .AllowAnyMethod()
+        //         .AllowCredentials();
+        string frontend_ip = Environment.GetEnvironmentVariable("FRONTEND_IP") ?? "http://localhost:3000";
+        policy.WithOrigins(frontend_ip)
                 .AllowAnyHeader()
                 .AllowAnyMethod()
-                .AllowCredentials(); ;
+                .AllowCredentials();
     });
 });
 

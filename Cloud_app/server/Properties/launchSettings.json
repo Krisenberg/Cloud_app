@@ -8,7 +8,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://52.2.242.132:5244",
+      "applicationUrl": "http://localhost:5244",
     },
     "https": {
       "commandName": "Project",
@@ -18,7 +18,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://52.2.242.132:5244"
+      "applicationUrl": "https://localhost:5244"
     },
     "IIS Express": {
       "commandName": "IISExpress",
@@ -31,7 +31,7 @@
     "Docker": {
       "commandName": "Docker",
       "launchBrowser": true,
-      "launchUrl": "https://52.2.242.132:5244/swagger",
+      "launchUrl": "https://localhost:5244/swagger",
       "environmentVariables": {
         "ASPNETCORE_HTTPS_PORTS": "5245",
         "ASPNETCORE_HTTP_PORTS": "5244"

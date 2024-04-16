@@ -29,9 +29,8 @@ function App() {
 
   const joinGame = async(username) => {
     try {
-
       const conn = new HubConnectionBuilder()
-                    .withUrl("http://52.2.242.132:5244/game")
+                    .withUrl(`${process.env.REACT_APP_BACKEND_IP}/game`)
                     .configureLogging(LogLevel.Information)
                     .build();
       setConnection(conn);

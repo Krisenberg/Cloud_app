@@ -699,3 +699,6 @@ node_modules
 # keys
 *.pem
 *.ppk
+
+# env variables
+*.env

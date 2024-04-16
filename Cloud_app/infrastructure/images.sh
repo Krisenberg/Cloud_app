@@ -1,22 +1,23 @@
 # Pull the Docker images
-    sudo docker pull krisenberg/frontend:aws
-    sudo docker pull krisenberg/last:latest
+    sudo docker pull krisenberg/backend:latest
+    sudo docker pull krisenberg/frontend:latest
 
 # Create the docker-compose file
     cat <<DOCKER_EOF > docker-compose.yml
     version: '3'
     services:
-        backend:
-            image: krisenberg/server:v1.0
-            ports:
-            - "5244:80"
-        frontend:
-            image: krisenberg/client:v1.0
-            ports:
-            - "3000:3000"
-    networks:
-        app-network:
-            driver: bridge
+    backend:
+        image: krisenberg/backend:latest
+        ports:
+        - "8080:80"
+        environment:
+        - FRONTEND_IP=http://3.227.254.227:3000
+    frontend:
+        image: krisenberg/frontend:latest
+        ports:
+        - "3000:3000"
+        environment:
+        - REACT_APP_BACKEND_IP=http://3.227.254.227:8080
     DOCKER_EOF
 
     sudo chmod +x docker-compose.yml

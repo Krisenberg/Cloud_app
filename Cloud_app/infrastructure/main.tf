@@ -1,72 +1,74 @@
-# Definicja dostawcy i wersji konfiguracji 
+# Define the provider (here - AWS) and its version
 terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.43"
+    required_providers {
+        aws = {
+            source  = "hashicorp/aws"
+            version = "~> 4.16"
+        }
     }
-  }
+    required_version = ">= 1.2.0"
 }
 
-# Definicja regionu, gdzie tworzone będą zasoby AWS'a
+# Define the region in which AWS resources will 'physically' be created
 provider "aws" {
   region = "us-east-1"
+  profile = "krzysztof.glowacz"
 }
 
 # Tworzy Virtual Private Cloud, które pozwala na DNS i nazwy hostów.
 # Włącza wsparcie dla DNS i nazw hostów DNS wewnątrz VPC
-resource "aws_vpc" "app_vpc" {
+resource "aws_vpc" "ttt_vpc" {
   cidr_block           = "10.0.0.0/24"
   enable_dns_support   = true
   enable_dns_hostnames = true
   tags = {
-    Name = "app_vpc"
+    Name = "ttt_vpc"
   }
 }
 
 # Brama umożliwiające łączenie się VPC z Internetem
-resource "aws_internet_gateway" "tic_tac_toe_igw" {
-  vpc_id = aws_vpc.app_vpc.id
+resource "aws_internet_gateway" "ttt_gateway" {
+  vpc_id = aws_vpc.ttt_vpc.id
   tags = {
-    Name = "tic_tac_toe_igw"
+    Name = "ttt_gateway"
   }
 }
 
 # Tworzy podsieć w VPC z automatycznym przydzielaniem IP publicznych oraz dla EC2
-resource "aws_subnet" "tic_tac_toe_subnet" {
-  vpc_id                  = aws_vpc.app_vpc.id
+resource "aws_subnet" "ttt_subnet" {
+  vpc_id                  = aws_vpc.ttt_vpc.id
   cidr_block              = "10.0.0.0/26"
   map_public_ip_on_launch = true 
   tags = {
-    Name = "tic_tac_toe_subnet"
+    Name = "ttt_subnet"
   }
 }
 
 # Tworzy tabelę routingu dla VPC, dodając trasę domyślną przez bramę 
-resource "aws_route_table" "tic_tac_toe_rt" { 
-  vpc_id = aws_vpc.app_vpc.id
+resource "aws_route_table" "ttt_rt" { 
+  vpc_id = aws_vpc.ttt_vpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.tic_tac_toe_igw.id
+    gateway_id = aws_internet_gateway.ttt_gateway.id
   }
 
   tags = {
-    Name = "tic_tac_toe_rt"
+    Name = "ttt_rt"
   }
 }
 
 # Wiąże tabelę routingu z podsiecią, umożliwiając jej dostęp do internetu.
-resource "aws_route_table_association" "tic_tac_toe_rta" {
-  subnet_id      = aws_subnet.tic_tac_toe_subnet.id
-  route_table_id = aws_route_table.tic_tac_toe_rt.id
+resource "aws_route_table_association" "ttt_rt_assoc" {
+  subnet_id      = aws_subnet.ttt_subnet.id
+  route_table_id = aws_route_table.ttt_rt.id
 }
 
 # Tworzy grupę bezpieczeństwa z regułami dla ruchu przychodzącego (ingress) i wychodzącego (egress), umożliwiając jedynie ruch na niezbędnych portach.
 # Zapewnia to bezpieczeństwo przed atakami na wolne porty.
-resource "aws_security_group" "tic_tac_toe_sg" {
-  name        = "tic_tac_toe_sg"
-  vpc_id      = aws_vpc.app_vpc.id
+resource "aws_security_group" "ttt_sec_group" {
+  name        = "ttt_sec_group"
+  vpc_id      = aws_vpc.ttt_vpc.id
   description = "Security group for accessing application and ec2 via SSH"
 
 # HTTP
@@ -87,8 +89,8 @@ resource "aws_security_group" "tic_tac_toe_sg" {
 
 # backend
   ingress {
-    from_port   = 5244
-    to_port     = 5244
+    from_port   = 8080
+    to_port     = 8080
     protocol    = "tcp" 
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -118,7 +120,7 @@ resource "aws_security_group" "tic_tac_toe_sg" {
   }
 
   tags = {
-    Name = "tic_tac_toe_sg"
+    Name = "ttt_sec_group"
   }
 }
 
@@ -127,9 +129,9 @@ resource "aws_security_group" "tic_tac_toe_sg" {
 resource "aws_instance" "tic_tac_toe" {
   ami                      = "ami-0cf43e890af9e3351"
   instance_type            = "t2.micro"
-  subnet_id              = aws_subnet.tic_tac_toe_subnet.id
-  vpc_security_group_ids = [aws_security_group.tic_tac_toe_sg.id]
-  key_name               = "vockey"
+  subnet_id              = aws_subnet.ttt_subnet.id
+  vpc_security_group_ids = [aws_security_group.ttt_sec_group.id]
+  key_name               = var.ssh_key
 
   tags = {
     Name = "tic_tac_toe"
@@ -152,16 +154,16 @@ resource "aws_instance" "tic_tac_toe" {
 }
 
 # Definicja i powiązanie Elastic IP, które daje nam publiczny adres IP
-resource "aws_eip" "app_eip" {
-  domain     = "vpc"
-  depends_on = [aws_vpc.app_vpc]
-}
+# resource "aws_eip" "app_eip" {
+#   domain     = "vpc"
+#   depends_on = [aws_vpc.app_vpc]
+# }
 
-resource "aws_eip_association" "eip_assoc" {
-  instance_id   = aws_instance.tic_tac_toe.id
-  allocation_id = aws_eip.app_eip.id
-}
+# resource "aws_eip_association" "eip_assoc" {
+#   instance_id   = aws_instance.tic_tac_toe.id
+#   allocation_id = aws_eip.app_eip.id
+# }
 
-output "instance_public_ip" {
-    value = aws_instance.tic_tac_toe.public_ip
-}
+# output "instance_public_ip" {
+#     value = aws_instance.tic_tac_toe.public_ip
+# }
