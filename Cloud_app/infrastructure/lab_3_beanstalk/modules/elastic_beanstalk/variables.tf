@@ -1,0 +1,15 @@
+variable "cname_prefix" {
+  type        = string
+}
+
+variable "method" {
+    type        = string
+}
+
+variable "vpc_id" {
+  type = string
+}
+
+variable "subnet_id" {
+  type = string
+}

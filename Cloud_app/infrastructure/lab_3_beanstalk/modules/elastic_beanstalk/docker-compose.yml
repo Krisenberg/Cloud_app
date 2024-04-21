@@ -1,0 +1,16 @@
+version: '3'
+services:
+  backend:
+    image: krisenberg/backend:latest
+    container_name: backend
+    ports:
+      - "8080:80"
+    environment:
+      - FRONTEND_IP="${METHOD}://${ADDRESS}:3000"
+  frontend:
+    image: krisenberg/frontend:latest
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_BACKEND_IP="${METHOD}://${ADDRESS}:8080"
