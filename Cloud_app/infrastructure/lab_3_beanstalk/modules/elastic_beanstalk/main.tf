@@ -96,17 +96,17 @@ resource "aws_elastic_beanstalk_environment" "l3-ttt-env" {
     value     = "SingleInstance" # Environment type, could be LoadBalanced or SingleInstance
   }
 
-  setting {
-    namespace = "aws:autoscaling:asg"
-    name      = "MinSize"
-    value     = "1" # Minimum size of the Auto Scaling Group
-  }
+  # setting {
+  #   namespace = "aws:autoscaling:asg"
+  #   name      = "MinSize"
+  #   value     = "1" # Minimum size of the Auto Scaling Group
+  # }
 
-  setting {
-    namespace = "aws:autoscaling:asg"
-    name      = "MaxSize"
-    value     = "2" # Maximum size of the Auto Scaling Group
-  }
+  # setting {
+  #   namespace = "aws:autoscaling:asg"
+  #   name      = "MaxSize"
+  #   value     = "2" # Maximum size of the Auto Scaling Group
+  # }
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
