@@ -1,9 +1,9 @@
 variable "cname_prefix" {
-  type        = string
+  type = string
 }
 
 variable "method" {
-    type        = string
+    type = string
 }
 
 variable "vpc_id" {
@@ -11,5 +11,9 @@ variable "vpc_id" {
 }
 
 variable "subnet_id" {
+  type = string
+}
+
+variable "security_group_id" {
   type = string
 }

@@ -1,48 +1,92 @@
-# Tworzy Virtual Private Cloud, które pozwala na DNS i nazwy hostów.
-# Włącza wsparcie dla DNS i nazw hostów DNS wewnątrz VPC
-resource "aws_vpc" "tic-tac-toe-vpc" {
-  cidr_block           = "10.0.0.0/16"
+# Create Virtual Private Cloud and enable DNS and hostnames services inside it
+resource "aws_vpc" "ttt_vpc" {
+  cidr_block           = "10.0.0.0/24"
   enable_dns_support   = true
   enable_dns_hostnames = true
   tags = {
-    Name = "tic-tac-toe-vpc"
+    Name = "ttt_vpc"
   }
 }
 
-# Tworzy podsieć w VPC z automatycznym przydzielaniem IP publicznych oraz dla EC2
-resource "aws_subnet" "tic-tac-toe-subnet" {
-  vpc_id                  = aws_vpc.tic-tac-toe-vpc.id
-  cidr_block              = "10.0.1.0/24"
-  map_public_ip_on_launch = true
+# Attach an Internet gateway to make the instance visible from outside
+resource "aws_internet_gateway" "ttt_gateway" {
+  vpc_id = aws_vpc.ttt_vpc.id
   tags = {
-    Name = "tic-tac-toe-subnet"
+    Name = "ttt_gateway"
   }
 }
 
-# Tworzy grupę bezpieczeństwa z regułami dla ruchu przychodzącego (ingress) i wychodzącego (egress), umożliwiając jedynie ruch na niezbędnych portach.
-# Zapewnia to bezpieczeństwo przed atakami na wolne porty.
-resource "aws_security_group" "tic-tac-toe-sg" {
-  name        = "tic-tac-toe-sg"
-  vpc_id      = aws_vpc.tic-tac-toe-vpc.id
+# Create a public subnet inside the instance
+resource "aws_subnet" "ttt_subnet" {
+  vpc_id                  = aws_vpc.ttt_vpc.id
+  cidr_block              = "10.0.0.0/26"
+  map_public_ip_on_launch = true 
+  tags = {
+    Name = "ttt_subnet"
+  }
+}
+
+# Create a routing table, attach it to the instance's VPC and add a default route through the gateway
+resource "aws_route_table" "ttt_rt" { 
+  vpc_id = aws_vpc.ttt_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.ttt_gateway.id
+  }
+
+  tags = {
+    Name = "ttt_rt"
+  }
+}
+
+# Associate the routing table to the subnet to apply routing rules to that subnet
+resource "aws_route_table_association" "ttt_rt_assoc" {
+  subnet_id      = aws_subnet.ttt_subnet.id
+  route_table_id = aws_route_table.ttt_rt.id
+}
+
+# Create a security group defining incoming and outcoming rules for the network
+# That way we define and enable only the necessary ports for our application
+# This security group is then attached to the VPC
+resource "aws_security_group" "ttt_sec_group" {
+  name        = "ttt_sec_group"
+  vpc_id      = aws_vpc.ttt_vpc.id
   description = "Security group for accessing application and ec2 via SSH"
 
-  # backend
+  # HTTP rule
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # HTTPS rule
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp" 
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # backend rule - port 8080
   ingress {
     from_port   = 8080
     to_port     = 8080
-    protocol    = "tcp"
+    protocol    = "tcp" 
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # frontend
+  # frontend rule - port 3000
   ingress {
     from_port   = 3000
     to_port     = 3000
-    protocol    = "tcp"
+    protocol    = "tcp" 
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # ssh
+  # ssh - enable ssh connection
   ingress {
     from_port   = 22
     to_port     = 22
@@ -50,7 +94,7 @@ resource "aws_security_group" "tic-tac-toe-sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Reguła dla całego ruchu wychodzącego, która go nie ogranicza
+  # enable whole outcoming traffic
   egress {
     from_port   = 0
     to_port     = 0
@@ -59,34 +103,6 @@ resource "aws_security_group" "tic-tac-toe-sg" {
   }
 
   tags = {
-    Name = "tic-tac-toe-sg"
+    Name = "ttt_sec_group"
   }
-}
-
-# Brama umożliwiające łączenie się VPC z Internetsem
-resource "aws_internet_gateway" "tic-tac-toe-igw" {
-  vpc_id = aws_vpc.tic-tac-toe-vpc.id
-  tags = {
-    Name = "tic-tac-toe-igw"
-  }
-}
-
-# Tworzy tabelę routingu dla VPC, dodając trasę domyślną przez bramę 
-resource "aws_route_table" "tic-tac-toe-rt" {
-  vpc_id = aws_vpc.tic-tac-toe-vpc.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.tic-tac-toe-igw.id
-  }
-
-  tags = {
-    Name = "tic-tac-toe-rt"
-  }
-}
-
-# Wiąże tabelę routingu z podsiecią, umożliwiając jej dostęp do internetu.
-resource "aws_route_table_association" "tic-tac-toe-rta" {
-  subnet_id      = aws_subnet.tic-tac-toe-subnet.id
-  route_table_id = aws_route_table.tic-tac-toe-rt.id
 }

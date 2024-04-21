@@ -6,11 +6,11 @@ services:
     ports:
       - "8080:80"
     environment:
-      - FRONTEND_IP="${METHOD}://${ADDRESS}:3000"
+      - FRONTEND_IP=http://glowacz-ttt.us-east-1.elasticbeanstalk.com:3000
   frontend:
     image: krisenberg/frontend:latest
     container_name: frontend
     ports:
       - "3000:3000"
     environment:
-      - REACT_APP_BACKEND_IP="${METHOD}://${ADDRESS}:8080"
+      - REACT_APP_BACKEND_IP=http://glowacz-ttt.us-east-1.elasticbeanstalk.com:8080

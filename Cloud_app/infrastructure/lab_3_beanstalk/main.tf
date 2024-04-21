@@ -15,7 +15,7 @@ provider "aws" {
 }
 
 module "network" {
-  source        = "./modules/network/"
+  source = "./modules/network/"
 }
 
 module "beanstalk" {
@@ -24,4 +24,5 @@ module "beanstalk" {
   method        = var.method
   vpc_id        = module.network.vpc_id
   subnet_id     = module.network.subnet_id
+  security_group_id = module.network.security_group_id
 }
