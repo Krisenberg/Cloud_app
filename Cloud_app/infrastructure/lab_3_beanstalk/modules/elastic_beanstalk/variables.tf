@@ -17,3 +17,11 @@ variable "subnet_id" {
 variable "security_group_id" {
   type = string
 }
+
+variable "port_frontend" {
+  type = number
+}
+
+variable "port_backend" {
+  type = number
+}

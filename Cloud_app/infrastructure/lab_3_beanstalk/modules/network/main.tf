@@ -70,18 +70,18 @@ resource "aws_security_group" "ttt_sec_group" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # backend rule - port 8080
+  # backend rule - port var.port_backend
   ingress {
-    from_port   = 8080
-    to_port     = 8080
+    from_port   = var.port_backend
+    to_port     = var.port_backend
     protocol    = "tcp" 
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # frontend rule - port 3000
+  # frontend rule - port var.port_frontend
   ingress {
-    from_port   = 3000
-    to_port     = 3000
+    from_port   = var.port_frontend
+    to_port     = var.port_frontend
     protocol    = "tcp" 
     cidr_blocks = ["0.0.0.0/0"]
   }

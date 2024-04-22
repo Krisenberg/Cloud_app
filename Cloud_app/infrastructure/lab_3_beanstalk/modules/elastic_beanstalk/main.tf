@@ -1,3 +1,14 @@
+# Create a local .env file dynamically - doesn't work
+# resource "local_file" "env_file" {
+#   content = <<-EOT
+#     TF_VAR_PORT_BACKEND=${var.port_backend}
+#     TF_VAR_PORT_FRONTEND=${var.port_frontend}
+#     TF_VAR_CNAME_PREFIX=${var.cname_prefix}
+#   EOT
+
+#   filename = "${path.module}/.env"
+# }
+
 resource "aws_s3_bucket" "l3-ttt-s3-bucket" {
   bucket = "l3-ttt-s3-bucket"
   tags   = {
@@ -72,5 +83,4 @@ resource "aws_elastic_beanstalk_environment" "l3-ttt-env" {
     name      = "SecurityGroups"
     value     = var.security_group_id
   }
-
 }

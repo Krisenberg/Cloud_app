@@ -1,3 +1,3 @@
-# output "public_dns" {
-#   value = module.elastic_beanstalk.public_dns
-# }
+output "public_address" {
+  value = module.beanstalk.public_address
+}
