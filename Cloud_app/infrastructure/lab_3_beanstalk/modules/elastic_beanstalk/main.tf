@@ -6,9 +6,19 @@
 #     TF_VAR_CNAME_PREFIX=${var.cname_prefix}
 #   EOT
 
-#   filename = "${path.module}/.env"
+#   filename = "${path.module}/compose/docker.env"
 # }
 
+# Create a .zip archive with docker-compose and file with env variables - also doesn't work
+# data "archive_file" "compose-env-archive" {
+#   type        = "zip"
+#   output_path = "${path.module}/compose.zip"
+#   source_dir  = "${path.module}/compose/"
+#   depends_on = [resource.local_file.env_file]
+# }
+
+
+# Create AWS S3 bucket which will be used for storing docker-compose.yml file
 resource "aws_s3_bucket" "l3-ttt-s3-bucket" {
   bucket = "l3-ttt-s3-bucket"
   tags   = {
@@ -16,22 +26,29 @@ resource "aws_s3_bucket" "l3-ttt-s3-bucket" {
   }
 }
 
+# Create an object inside the S3 bucket - app's docker-compose file
 resource "aws_s3_object" "l3-ttt-s3-object" {
   bucket = aws_s3_bucket.l3-ttt-s3-bucket.bucket
+  # source = data.archive_file.compose-env-archive.output_path
+  # key    = "compose.zip"
+  # depends_on = [data.archive_file.compose-env-archive]
   source = "${path.module}/docker-compose.yml"
   key    = "docker-compose.yml"
 }
 
+# Create AWS Elastic Beanstalk application
 resource "aws_elastic_beanstalk_application" "l3-ttt-app" {
   name        = "lab-3-tic-tac-toe-app"
   description = "Tic tac toe game running in the cloud infrastructure (using AWS Elastic Beanstalk)"
 }
 
+# Create AWS IAM Profile for the instance to get permissions
 resource "aws_iam_instance_profile" "instance-profile" {
-  name = "instance-profile" # Instance profile name
-  role = "LabRole" # Existing IAM role to associate with the instance profile
+  name = "instance-profile"
+  role = "LabRole"
 }
 
+# Create Elastic Beanstalk app'a version passing the reference to the S3 bucket with docker-compose.yml file
 resource "aws_elastic_beanstalk_application_version" "l3-ttt-app-version" {
   name        = "v1"
   application = aws_elastic_beanstalk_application.l3-ttt-app.name
@@ -40,44 +57,54 @@ resource "aws_elastic_beanstalk_application_version" "l3-ttt-app-version" {
   key         = aws_s3_object.l3-ttt-s3-object.key
 }
 
+# Create Elastic Beanstalk app'a environment with solution stack name tailored for Docker,
+# attach the version defined above and cname_prefix from terraform variables
 resource "aws_elastic_beanstalk_environment" "l3-ttt-env" {
   name                = "lab-3-tic-tac-toe-environment"
   application         = aws_elastic_beanstalk_application.l3-ttt-app.name
   solution_stack_name = "64bit Amazon Linux 2023 v4.3.0 running Docker"
-  # tier value is not needed since default one (e.g. "WebServer") is fine
+  # tier value is not needed since the default one (e.g. "WebServer") is fine
   version_label       = aws_elastic_beanstalk_application_version.l3-ttt-app-version.name
   cname_prefix        = var.cname_prefix
 
+  # Set environment type, choose from: LoadBalancer / SingleInstance.
+  # SingleInstance is fine for our purpose
   setting {
     namespace = "aws:elasticbeanstalk:environment"
     name      = "EnvironmentType"
-    value     = "SingleInstance" # Environment type, could be LoadBalanced or SingleInstance
+    value     = "SingleInstance"
   }
 
+  # Set IamInstanceProfile attaching the previously defined instance-profile
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "IamInstanceProfile"
     value     = aws_iam_instance_profile.instance-profile.name
   }
 
+  # Set InstanceType to t2.micro (the same one as we used before in the lab)
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "InstanceType"
     value     = "t2.micro"
   }
 
+  # Set VPCId to the one from terraform variables that will reference the VPC created from module
+  # network (VPC has the same config as on the previous lab)
   setting {
     namespace = "aws:ec2:vpc"
     name      = "VPCId"
     value     = var.vpc_id
   }
 
+  # Set Subnets using the ID provided by network module (Subnet has the same config as on the previous lab)
   setting {
     namespace = "aws:ec2:vpc"
     name      = "Subnets"
     value     = var.subnet_id
   }
 
+  # Set SecurityGroups using the ID provided by network module
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "SecurityGroups"
