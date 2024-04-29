@@ -1,5 +1,4 @@
-import verify from '../src/verify'
-import sign from '../src/sign'
+import { verify, sign } from '../src';
 
 describe('verify', () => {
 
@@ -8,7 +7,7 @@ describe('verify', () => {
 
         const token = sign({ payload: { name: 'StudentKrzysztof'}, secret});
 
-        const verified = verify({ token });
+        const verified = verify({ token, secret });
 
         expect(verified.name).toBe('StudentKrzysztof');
     });
@@ -20,7 +19,7 @@ describe('verify', () => {
         const token = sign({ payload: { name: 'StudentKrzysztof'}, secret: secretOne});
 
         try{
-            verify({ token: secret: secretTwo})
+            verify({ token, secret: secretTwo})
         }catch(e){
             expect(e.message).toBe('Invalid signature');
         }

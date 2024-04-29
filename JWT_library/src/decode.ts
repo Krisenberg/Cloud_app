@@ -12,7 +12,7 @@ function decode( { token }: DecodeInput){
         throw new Error('Invalid JWT');
     }
 
-    const [, payload] = parts;
+    const payload = parts[1];
 
     return JSON.parse(atob(payload));
 }

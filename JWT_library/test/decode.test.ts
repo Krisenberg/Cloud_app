@@ -1,5 +1,4 @@
-import sign from '../src/sign'
-import decode from '../src/decode'
+import { decode, sign } from '../src';
 
 describe('decode', () =>{
     it('Should decode the token payload', () => {
