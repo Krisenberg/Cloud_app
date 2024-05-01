@@ -1,0 +1,10 @@
+.contentColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 50px;
+}
+
+.usernameInput {
+  min-width: 500px;
+}

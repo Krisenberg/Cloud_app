@@ -37,48 +37,6 @@
   }
 } */
 
-.non-clickable-cell{
-  width: 75px;
-  height: 75px;
-  border: 1px solid;
-  box-shadow: 0 0 0 1px;
-  line-height: 75px;
-  font-size: 50px;
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, cursive;
-  text-align: center;
-}
-
-.cell{
-  width: 75px;
-  height: 75px;
-  border: 1px solid;
-  box-shadow: 0 0 0 1px;
-  line-height: 75px;
-  font-size: 50px;
-  cursor: pointer;
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, cursive;
-  text-align: center;
-}
-
-.cell:hover{
-  background-color: rgb(225, 225, 225);
-}
-
-.cell:active{
-  background-color: rgb(165, 165, 165);
-}
-
-#cellContainer{
-  display: grid;
-  grid-template-columns: repeat(3, auto);
-  width: 225px;
-  margin: auto;
-}
-
-.board {
-  background-color: white;
-}
-
 .roboto-light {
   font-family: "Roboto", sans-serif;
   font-weight: 300;
@@ -164,6 +122,50 @@
 
 @media (min-width: 768px) {
   .customButton {
+    font-size: 24px;
+    min-width: 196px;
+  }
+}
+
+.customButtonDisabled {
+  align-items: center;
+  background-color: #CCCCCC; /* Change background color to gray */
+  border: 0;
+  border-radius: 8px;
+  box-shadow: none; /* Remove box shadow */
+  color: #FFFFFF;
+  display: flex;
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 18px;
+  justify-content: center;
+  line-height: 1em;
+  max-width: 100%;
+  min-width: 80px;
+  padding: 3px;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+  cursor: not-allowed; /* Change cursor to indicate button is disabled */
+  opacity: 0.5; /* Reduce opacity to indicate button is disabled */
+  pointer-events: none; /* Disable pointer events */
+  margin: 40px;
+}
+
+.customButtonDisabled span {
+  background-color: rgb(5, 6, 45);
+  padding: 16px 24px;
+  border-radius: 6px;
+  width: 100%;
+  height: 100%;
+  transition: 300ms;
+}
+
+@media (min-width: 768px) {
+  .customButtonDisabled {
     font-size: 24px;
     min-width: 196px;
   }

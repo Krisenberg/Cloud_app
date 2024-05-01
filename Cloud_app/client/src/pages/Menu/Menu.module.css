@@ -128,7 +128,7 @@ body{
 }
 
 .line {
-  background-color: whitesmoke;;
+  background-color: whitesmoke;
   display: flex;
   flex-direction:row;
   height:50vh;

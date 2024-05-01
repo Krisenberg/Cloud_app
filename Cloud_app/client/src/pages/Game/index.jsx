@@ -1,0 +1,149 @@
+import classes from './Game.module.css';
+import { useAuthenticator } from '@aws-amplify/ui-react';
+import { Col, Row, Navbar, Container, Nav } from 'react-bootstrap';
+import '../../styles/App.css'
+import useScrollBlock from '../../useScrollBlock';
+import { useState, useEffect } from "react";
+import Cookies from "universal-cookie";
+import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
+import WaitingRoom from '../../components/WaitingRoom'
+import GameData from '../../components/GameData'
+import GameResult from '../../components/GameResult'
+import PreventUnload from '../../PreventUnload';
+import { fetchAuthSession } from '@aws-amplify/auth';
+
+const Game = () => {
+
+    const [blockScroll, allowScroll] = useScrollBlock();
+    const { authStatus, user } = useAuthenticator(context => [context.authStatus, context.user]);
+    // const { user, signOut } = useAuthenticator((context) => [context.user]);
+    const isLoggedIn = (authStatus === 'authenticated');
+    const[conn, setConnection] = useState();
+    const[hasUserJoinedGame, setUserJoinStatus] = useState(false);
+    const[hasGameStarted, setGameStatus] = useState(false);
+    const[playerMark, setPlayerMark] = useState("O");
+    const[playerUsername, setPlayerUsername] = useState(null);
+    const[opponentUsername, setOpponentUsername] = useState(null);
+    const[isGameFinished, markGameFinished] = useState(false);
+    const[gameWinner, setGameWinner] = useState(null);
+    const cookies = new Cookies();
+
+    const printAccessTokenAndIdToken = async () => {
+        try {
+            const session = await fetchAuthSession();   // Fetch the authentication session
+            console.log('Access Token:', session.tokens.accessToken.toString());
+            console.log('ID Token:', session.tokens.idToken.toString());
+        }
+        catch (e) { console.log(e); }
+    };
+
+    // blockScroll();
+
+    const joinGame = async(username) => {
+        try {
+            const conn = new HubConnectionBuilder()
+                        .withUrl(`${process.env.REACT_APP_BACKEND_IP}/game`)
+                        .configureLogging(LogLevel.Information)
+                        .build();
+            setConnection(conn);
+            conn.on("JoinGame", (hasGameStarted, username1, username2, msg) => {
+                console.log("Has game started: ", hasGameStarted, "msg: ", msg);
+                setGameStatus(hasGameStarted);
+                if (username === username1){
+                    setPlayerUsername(username1)
+                    setOpponentUsername(username2)
+                }
+                if (username2 != null && username2 === username){
+                    setPlayerUsername(username2);
+                    setOpponentUsername(username1)
+                }
+                setUserJoinStatus(true);
+                if (!hasGameStarted){
+                    setPlayerMark("X");
+                }
+            });
+    
+            conn.on("FinishGame", (winner) => {
+                console.log("The game has finished. Winner: ", winner);
+                markGameFinished(true);
+                setGameWinner(winner);
+            });
+    
+            await conn.start();
+            await conn.invoke("JoinGame", username);
+            setPlayerUsername(username);
+            cookies.set("username", username);
+        } catch(e) {
+            console.log(e);
+        }
+    }
+
+    const handleGameJoining = () => {
+        if (!hasUserJoinedGame)
+            return <WaitingRoom isLoggedIn={isLoggedIn} joinGame={joinGame}></WaitingRoom>;
+        // var username = cookies.get("username");
+        if (!hasGameStarted)
+            return (
+            <Row className='px-5 py-5'>
+                <PreventUnload />
+                <Col sm={12}>
+                    <hr></hr>
+                    <h2>Hi {playerUsername},</h2>
+                    <h2>please wait for the opponent...</h2>
+                </Col>
+            </Row>
+            )
+        if (isGameFinished) {
+            if (gameWinner === null){
+            return <GameResult hasUserWon={false} isDraw={true}></GameResult>
+            }
+            if (gameWinner === playerUsername){
+            return <GameResult hasUserWon={true}  isDraw={false}></GameResult>
+            }
+            return <GameResult hasUserWon={false}  isDraw={false}></GameResult>
+        }
+            // return <h1 className='font-weight'>Waiting for the opponent...</h1>;
+        return (<GameData playerMark={playerMark} conn={conn} username={playerUsername} opponentUsername={opponentUsername}></GameData>)
+    }
+
+    return (
+        <Container>
+            <Navbar className="navbar">
+                <Container>
+                    <Navbar.Brand className="navbar-brand" href="/">
+                        <img
+                            alt=""
+                            src="logo192.png"
+                            width="30"
+                            height="30"
+                            className="d-inline-block align-top"
+                        />{' '}
+                        <span className="roboto-navbar">
+                            TIC TAC TOE
+                        </span>
+                    </Navbar.Brand>
+                    <Nav className="navbar-links">
+                        {isLoggedIn ? 
+                            <Nav.Link className="roboto-navbar underline-link" href="/profile">PROFILE</Nav.Link>
+                            :
+                            <Nav.Link className="roboto-navbar underline-link" href="/profile">LOGIN</Nav.Link>
+                        }
+                        {/* <Nav.Link className="roboto-navbar underline-link" href="/profile">PROFILE</Nav.Link>    */}
+                    </Nav>
+                </Container>
+            </Navbar>
+            <Col sm={12} className={`${classes.mainColumn}`}>
+                {isLoggedIn ? null :
+                    <div className={`${classes.notSignedColumn}`}>
+                        <p className={`roboto-light ${classes.notSignedText}`}>You have to log in to play the game!</p>
+                        <div className={`${classes.line}`}/>
+                    </div>
+                }
+                { handleGameJoining() }
+                
+            </Col>
+        </Container>
+    );
+}
+
+export default Game;

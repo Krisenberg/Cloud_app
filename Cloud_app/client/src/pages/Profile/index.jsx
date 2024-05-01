@@ -1,20 +1,19 @@
-import React from "react";
 import classes from './Profile.module.css';
-import { useNavigate } from "react-router-dom";
 import { Authenticator } from '@aws-amplify/ui-react';
-import { fetchAuthSession } from '@aws-amplify/auth';
 import { Col, Navbar, Container, Nav } from 'react-bootstrap';
 import '../../styles/App.css'
 import useScrollBlock from '../../useScrollBlock';
+import { useState, useEffect } from "react";
 
 const Profile = () => {
 
     const [blockScroll, allowScroll] = useScrollBlock();
+    const [isLoggedIn, setLoggedInStatus] = useState(false);
 
     blockScroll();
 
     return (
-        <Container className="profile-container">
+        <Container>
             <Navbar className="navbar">
                 <Container>
                     <Navbar.Brand className="navbar-brand" href="/">
@@ -35,18 +34,24 @@ const Profile = () => {
                 </Container>
             </Navbar>
             <Col sm={12}>
-                <div className={`${classes.fullScreenContainer}`}>
-                    <Authenticator>
-                        {({ signOut, user }) => {
-                            return (
-                                <main>
-                                    <h1>Hello {user.username}, you are already signed in!</h1>
-                                    <button className="customButton" onClick={() => { signOut(); }}>Sign out</button>
-                                </main>
-                            );
-                        }}
-                    </Authenticator>
-                </div>
+                {isLoggedIn ? null :
+                    <div className={`${classes.notSignedColumn}`}>
+                        <p className={`roboto-light ${classes.notSignedText}`}>Please sign in!</p>
+                        <div className={`${classes.line}`}/>
+                    </div>
+                }
+                
+                <Authenticator>
+                    {({ signOut, user }) => {
+                        setLoggedInStatus(true);
+                        return (
+                            <main>
+                                <h1>Hello {user.username}, you are already signed in!</h1>
+                                <button className="customButton" onClick={ () => { setLoggedInStatus(false); signOut(); window.location.reload(); } }>Sign out</button>
+                            </main>
+                        );
+                    }}
+                </Authenticator>
             </Col>
         </Container>
     );

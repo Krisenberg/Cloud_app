@@ -1,0 +1,25 @@
+.notSignedColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 50px;
+}
+
+.mainColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+  
+.line {
+  background-color: whitesmoke;
+  display: flex;
+  flex-direction:row;
+  width:80%;
+  height: 1px;
+}
+  
+.notSignedText {
+  font-size: 2rem;
+  color: #FF204E;
+}

@@ -1,8 +1,8 @@
-import './styles/global.css';
 import './styles/App.css';
 // import SignUp from './components/SignUp';
 // import Login from './components/Login';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Authenticator } from '@aws-amplify/ui-react';
 import { Col, Row, Container, Button } from 'react-bootstrap';
 // import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
 // import WaitingRoom from './components/WaitingRoom';
@@ -15,22 +15,23 @@ import React from 'react';
 import { Amplify } from 'aws-amplify';
 import '@aws-amplify/ui-react/styles.css';
 import Login from './components/Login';
-import handleGameJoining from './components/GameJoin';
 
 import { Routes, Route, Link } from 'react-router-dom';
-import Menu from './elements/Menu';
-import Profile from './elements/Profile';
-import Game from './elements/Game';
+import Menu from './pages/Menu';
+import Profile from './pages/Profile';
+import Game from './pages/Game';
 
 function App() {
   return (
     <div>
-      <Routes>
-        <Route path="/" element={<Menu></Menu>} />
-        <Route path="/profile" element={<Profile></Profile>} />
-        <Route path="/game" component={Game} />
-        <Route path="*" element={<p>There's nothing here: 404!</p>} />
-      </Routes>
+      <Authenticator.Provider>
+        <Routes>
+          <Route path="/" element={<Menu></Menu>} />
+          <Route path="/profile" element={<Profile></Profile>} />
+          <Route path="/game" element={<Game></Game>} />
+          <Route path="*" element={<p>There's nothing here: 404!</p>} />
+        </Routes>
+      </Authenticator.Provider>
     </div>
   );
 }
@@ -178,19 +179,19 @@ Amplify.configure({
   //         </Row>
   //         {showLogin && <Login setIsLoggedIn={ setIsLoggedIn }></Login>}
   //         {!showLogin &&  handleGameJoining() }
-  //         {/* {!hasUserJoinedGame
-  //           ? <WaitingRoom joinGame={joinGame}></WaitingRoom>
-  //           : <h1 className='font-weight'>User has joined the game.</h1>
-  //         } */}
-  //         {/* {!hasGameStarted
-  //           ? <h1 className='font-weight'>User is waiting for the opponent...</h1>
-  //           : <h1 className='font-weight'>all is set and ready to play</h1>
-  //         } */}
+          // {/* {!hasUserJoinedGame
+          //   ? <WaitingRoom joinGame={joinGame}></WaitingRoom>
+          //   : <h1 className='font-weight'>User has joined the game.</h1>
+          // } */}
+          // {/* {!hasGameStarted
+          //   ? <h1 className='font-weight'>User is waiting for the opponent...</h1>
+          //   : <h1 className='font-weight'>all is set and ready to play</h1>
+          // } */}
           
-  //         {/* {!conn
-  //           ? <WaitingRoom joinGame={joinGame}></WaitingRoom>
-  //           : ...
-  //         } */}
+          // {/* {!conn
+          //   ? <WaitingRoom joinGame={joinGame}></WaitingRoom>
+          //   : ...
+          // } */}
   //         {/* <Authenticator>
   //           {({ signOut, user }) => (
   //             <main>
