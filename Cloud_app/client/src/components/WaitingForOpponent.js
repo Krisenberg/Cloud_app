@@ -1,7 +1,7 @@
 import Board from "./Board"
 import { Col, Row } from 'react-bootstrap';
 
-const Game = ({ playerMark, conn, username, opponentUsername }) => {
+const WaitingForOpponent = ({ playerMark, conn, username, opponentUsername }) => {
 
     return (
         <Col className='px-5 py-5'>
@@ -19,4 +19,4 @@ const Game = ({ playerMark, conn, username, opponentUsername }) => {
     )
 }
 
-export default Game
+export default WaitingForOpponent

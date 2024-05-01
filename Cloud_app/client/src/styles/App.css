@@ -1,0 +1,198 @@
+/* .App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+} */
+
+.non-clickable-cell{
+  width: 75px;
+  height: 75px;
+  border: 1px solid;
+  box-shadow: 0 0 0 1px;
+  line-height: 75px;
+  font-size: 50px;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, cursive;
+  text-align: center;
+}
+
+.cell{
+  width: 75px;
+  height: 75px;
+  border: 1px solid;
+  box-shadow: 0 0 0 1px;
+  line-height: 75px;
+  font-size: 50px;
+  cursor: pointer;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, cursive;
+  text-align: center;
+}
+
+.cell:hover{
+  background-color: rgb(225, 225, 225);
+}
+
+.cell:active{
+  background-color: rgb(165, 165, 165);
+}
+
+#cellContainer{
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  width: 225px;
+  margin: auto;
+}
+
+.board {
+  background-color: white;
+}
+
+.roboto-light {
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.roboto-navbar {
+  font-family: "Roboto", sans-serif;
+  font-weight: 700;
+  font-style: italic;
+  color: whitesmoke !important;
+  font-size: 1.5rem !important;
+  margin: 0 15px 0 15px;
+}
+
+.navbar {
+  background-color: #535C91;
+  margin: 15px 15px 50px 15px;
+  border-radius: 15px;
+}
+
+.navbar-brand {
+  padding: 15px;
+}
+
+.light-text {
+  color: whitesmoke;
+}
+
+.App {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(230, 193, 240, 0.716);
+}
+
+.customButton {
+  align-items: center;
+  background-image: linear-gradient(144deg,#AF40FF, #5B42F3 50%,#00DDEB);
+  border: 0;
+  border-radius: 8px;
+  box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  display: flex;
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 18px;
+  justify-content: center;
+  line-height: 1em;
+  max-width: 100%;
+  min-width: 80px;
+  padding: 3px;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+  cursor: pointer;
+  margin: 80px 40px 0px 40px;
+}
+
+.customButton:active,
+.customButton:hover {
+  outline: 0;
+}
+
+.customButton span {
+  background-color: rgb(5, 6, 45);
+  padding: 16px 24px;
+  border-radius: 6px;
+  width: 100%;
+  height: 100%;
+  transition: 300ms;
+}
+
+.customButton:hover span {
+  background: none;
+}
+
+@media (min-width: 768px) {
+  .customButton {
+    font-size: 24px;
+    min-width: 196px;
+  }
+}
+
+.navbar-links {
+  padding-right: 25px;
+}
+
+.underline-link {
+  display: inline-block; /* Display inline block */
+  position: relative; /* Set position relative */
+  color: whitesmoke; /* Set text color */
+}
+
+.underline-link:after {
+  content: ''; /* Add content after the element */
+  position: absolute; /* Position absolute for pseudo-element */
+  width: 100%; /* Full width */
+  transform: scaleX(0); /* Initial scale of 0 for underline effect */
+  height: 2px; /* Height of the underline */
+  bottom: 0; /* Align to bottom */
+  left: 0; /* Align to left */
+  background-color: whitesmoke; /* Background color of the underline */
+  transform-origin: bottom right; /* Set transform origin */
+  transition: transform 0.25s ease-out; /* Transition effect for the underline */
+}
+
+.underline-link:hover:after {
+  transform: scaleX(1); /* Scale the underline on hover */
+  transform-origin: bottom left; /* Set transform origin */
+}

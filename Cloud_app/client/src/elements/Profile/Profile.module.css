@@ -1,0 +1,14 @@
+/* body {
+    overflow: hidden;
+} */
+
+.profile-container {
+    height: 90vh;
+}
+
+.navbar {
+    background-color: #535C91;
+    margin: 15px;
+    padding: 10px;
+    border-radius: 15px;
+}
