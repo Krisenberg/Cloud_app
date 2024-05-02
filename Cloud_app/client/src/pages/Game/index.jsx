@@ -84,14 +84,14 @@ const Game = () => {
         // var username = cookies.get("username");
         if (!hasGameStarted)
             return (
-            <div className={`${classes.contentContainer}`}>
-                <PreventUnload></PreventUnload>
-                <Col sm={12}>
-                    <h2 className={`${classes.waitingHeader}`}>{playerUsername} [{user.username}], you are the first one in the queue.</h2>
-                    <div className={`${classes.line}`}/>
-                    <h2 className={`${classes.detailsText}`}>please wait for the opponent...</h2>
-                </Col>
-            </div>
+                <div className={`${classes.contentContainer}`}>
+                    <PreventUnload></PreventUnload>
+                    <Col sm={12} className={`${classes.contentColumn}`}>
+                        <h2 className={`${classes.waitingHeader}`}><span className={`${classes.userDataColor}`}>{playerUsername} [{user.username}]</span>, you are the first one in the queue.</h2>
+                        <div className={`${classes.line}`}/>
+                        <h2 className={`${classes.detailsText}`}>please wait for the opponent...</h2>
+                    </Col>
+                </div>
             )
         if (isGameFinished) {
             if (gameWinner === null){

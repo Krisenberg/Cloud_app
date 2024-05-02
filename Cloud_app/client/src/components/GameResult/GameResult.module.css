@@ -1,0 +1,118 @@
+.line {
+  background-color: whitesmoke;
+  display: flex;
+  flex-direction:row;
+  width:80%;
+  height: 1px;
+}
+  
+.drawColor {
+  color: #F9B572;
+}
+
+.winColor {
+  color: rgb(93, 188, 115);
+}
+
+.lossColor {
+  color: #FF204E;
+}
+
+.resultText {
+  color: whitesmoke;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-size: 2rem;
+  margin-bottom: 50px;
+}
+
+.contentContainer {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.buttonsRow {
+  width: 80%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.halfColumn {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.contentColumn {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.leaveButtonColor {
+  background-image: linear-gradient(144deg,#750E21, #BE3144 50%,#872341);
+}
+
+.playAgainButtonColor {
+  background-image: linear-gradient(144deg,#618264, #79AC78 50%,#B0D9B1);
+}
+
+.customButton {
+  align-items: center;
+  border: 0;
+  border-radius: 8px;
+  box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  display: flex;
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 3rem;
+  justify-content: center;
+  line-height: 1em;
+  max-width: 100%;
+  min-width: 80px;
+  padding: 2px;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.customButton:active,
+.customButton:hover {
+  outline: 0;
+}
+
+.customButton span {
+  background-color: rgb(5, 6, 45);
+  padding: 12px 12px;
+  border-radius: 6px;
+  width: 100%;
+  height: 100%;
+  transition: 300ms;
+}
+
+.customButton:hover span {
+  background: none;
+}
+
+@media (min-width: 768px) {
+  .customButton {
+    font-size: 1.5rem;
+    min-width: 50%;
+  }
+}
