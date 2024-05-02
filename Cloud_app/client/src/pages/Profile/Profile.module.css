@@ -1,5 +1,12 @@
 
+.mainColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .notSignedColumn {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -17,4 +24,118 @@
 .notSignedText {
   font-size: 2rem;
   color: #FF204E;
+}
+
+.contentColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  width: 100%;
+  height: 90%;
+  max-height: 1000px;
+}
+
+.halfColumn {
+  width: 70%;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: whitesmoke;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-size: 1.5rem;
+}
+
+.detailsColumn {
+  background-color: #535C91;
+  width: 10%;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: whitesmoke;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-size: 1.5rem;
+  padding: 30px;
+  border-radius: 15px;
+  
+}
+
+p {
+  margin-bottom: 20px !important;
+}
+
+.headerText {
+  color: whitesmoke;
+  font-family: "Roboto", sans-serif;
+  font-weight: 700;
+  font-size: 3rem;
+  font-style: italic;
+}
+
+.detailsText {
+  color: whitesmoke;
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  font-size: 1.5rem;
+}
+
+.detailsRow {
+  margin-top: 30px;
+  width: 80%;
+}
+
+.leaveButton {
+  align-items: center;
+  background-image: linear-gradient(144deg,#750E21, #BE3144 50%,#872341);
+  border: 0;
+  border-radius: 8px;
+  box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  display: flex;
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 3rem;
+  justify-content: center;
+  line-height: 1em;
+  max-width: 100%;
+  min-width: 80px;
+  padding: 2px;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.leaveButton:active,
+.leaveButton:hover {
+  outline: 0;
+}
+
+.leaveButton span {
+  background-color: rgb(5, 6, 45);
+  padding: 12px 12px;
+  border-radius: 6px;
+  width: 100%;
+  height: 100%;
+  transition: 300ms;
+}
+
+.leaveButton:hover span {
+  background: none;
+}
+
+@media (min-width: 768px) {
+  .leaveButton {
+    font-size: 1.5rem;
+    min-width: 50%;
+  }
 }

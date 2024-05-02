@@ -2,7 +2,7 @@ import { useState } from "react";
 import Board from "../Board"
 import { Col, Row } from 'react-bootstrap';
 import classes from './GameData.module.css';
-import PreventUnload from '../../PreventUnload';
+import PreventUnload from '../../utils/PreventUnload';
 
 const GameData = ({ playerMark, conn, username, opponentUsername }) => {
 

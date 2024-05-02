@@ -2,14 +2,14 @@ import classes from './Game.module.css';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { Col, Row, Navbar, Container, Nav } from 'react-bootstrap';
 import '../../styles/App.css'
-import useScrollBlock from '../../useScrollBlock';
+import useScrollBlock from '../../utils/useScrollBlock';
 import { useState, useEffect } from "react";
 import Cookies from "universal-cookie";
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
 import WaitingRoom from '../../components/WaitingRoom'
 import GameData from '../../components/GameData'
 import GameResult from '../../components/GameResult'
-import PreventUnload from '../../PreventUnload';
+import PreventUnload from '../../utils/PreventUnload';
 import { fetchAuthSession } from '@aws-amplify/auth';
 
 const Game = () => {
@@ -84,14 +84,14 @@ const Game = () => {
         // var username = cookies.get("username");
         if (!hasGameStarted)
             return (
-            <Row className='px-5 py-5'>
-                <PreventUnload />
+            <div className={`${classes.contentContainer}`}>
+                <PreventUnload></PreventUnload>
                 <Col sm={12}>
-                    <hr></hr>
-                    <h2>Hi {playerUsername},</h2>
-                    <h2>please wait for the opponent...</h2>
+                    <h2 className={`${classes.waitingHeader}`}>{playerUsername} [{user.username}], you are the first one in the queue.</h2>
+                    <div className={`${classes.line}`}/>
+                    <h2 className={`${classes.detailsText}`}>please wait for the opponent...</h2>
                 </Col>
-            </Row>
+            </div>
             )
         if (isGameFinished) {
             if (gameWinner === null){
