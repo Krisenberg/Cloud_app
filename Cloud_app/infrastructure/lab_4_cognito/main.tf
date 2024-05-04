@@ -17,12 +17,29 @@ provider "aws" {
   profile = "krzysztof.glowacz"
 }
 
-resource "aws_cognito_user_pool_client" "client" {
-  name = "client"
-
-  user_pool_id = aws_cognito_user_pool.pool.id
+# Create cognito user pool using `cognito_user_pool` module
+module "cognito" {
+  source            = "./modules/cognito_user_pool/"
 }
 
-resource "aws_cognito_user_pool" "pool" {
-  name = "pool"
+# Attach the network using `network` module
+module "network" {
+  source            = "./modules/network/"
+  port_frontend     = var.port_frontend
+  port_backend      = var.port_backend
+}
+
+# Attach the whole instance config using Elastic Beanstalk (configuration defined in the `elastic_beanstalk` module)
+module "beanstalk" {
+  source                      = "./modules/elastic_beanstalk/"
+  cname_prefix                = var.cname_prefix
+  method                      = var.method
+  vpc_id                      = module.network.vpc_id
+  subnet_id                   = module.network.subnet_id
+  security_group_id           = module.network.security_group_id
+  port_frontend               = var.port_frontend
+  port_backend                = var.port_backend
+  cognito_region              = "us-east-1"
+  cognito_user_pool_client_id = module.cognito.user_pool_client_id
+  cognito_user_pool_id        = module.cognito.user_pool_id
 }

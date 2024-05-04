@@ -47,9 +47,9 @@ function App() {
 Amplify.configure({
   Auth: {
     Cognito: {
-      region: 'us-east-1',
-      userPoolClientId: '7i020lqmh4b0t1br70sb70rsro',
-      userPoolId: 'us-east-1_GEVmW75hX',
+      region: `${process.env.REACT_APP_COGNITO_REGION}`,
+      userPoolClientId: `${process.env.REACT_APP_COGNITO_USER_POOL_CLIENT_ID}`,
+      userPoolId: `${process.env.REACT_APP_COGNITO_USER_POOL_ID}`,
       // loginWith: { // Optional
       //   oauth: {
       //     domain: 'abcdefghij1234567890-29051e27.auth.us-east-1.amazoncognito.com',
