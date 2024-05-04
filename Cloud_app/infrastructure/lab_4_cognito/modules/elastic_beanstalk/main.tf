@@ -35,7 +35,7 @@ resource "local_file" "deployment_compose" {
       user_pool_id=var.cognito_user_pool_id
     }
   )
-  filename = "${path.module}/deployment.yml"
+  filename = "${path.module}/docker-compose.yml"
 }
 
 # Create AWS S3 bucket which will be used for storing docker-compose.yml file
@@ -52,7 +52,7 @@ resource "aws_s3_object" "l3-ttt-s3-object" {
   # source = data.archive_file.compose-env-archive.output_path
   # key    = "compose.zip"
   # depends_on = [data.archive_file.compose-env-archive]
-  source = "${path.module}/deployment.yml"
+  source = "${path.module}/docker-compose.yml"
   # source = "${path.module}/docker-compose.yml"
   key    = "docker-compose.yml"
   depends_on = [local_file.deployment_compose]
