@@ -47,16 +47,10 @@ resource "aws_instance" "tic_tac_toe" {
     sudo service docker start
     sudo usermod -a -G docker ec2-user
 
-    # Download Docker Compose YAML file from S3
-    sudo yum install -y aws-cli
-    aws s3 cp "${aws_s3_object.l3-ttt-s3-object.id}" /home/ec2-user/docker-compose.yml
+    sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+    sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
-    # Change directory to where the YAML file is located
     cd /home/ec2-user
-
-    sudo chmod +x docker-compose.yml
-
-    # Run docker-compose up with the downloaded YAML file
-    sudo docker-compose up -d
-  EOF
+    EOF
 }
