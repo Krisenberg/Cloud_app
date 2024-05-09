@@ -5,12 +5,13 @@ import '../../styles/App.css'
 import useScrollBlock from '../../utils/useScrollBlock';
 import { useState, useEffect } from "react";
 import Cookies from "universal-cookie";
-import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
+import { HubConnectionBuilder, LogLevel, DefaultHttpClient } from '@microsoft/signalr'
 import WaitingRoom from '../../components/WaitingRoom'
 import GameData from '../../components/GameData'
 import GameResult from '../../components/GameResult'
 import PreventUnload from '../../utils/PreventUnload';
 import { fetchAuthSession } from '@aws-amplify/auth';
+import getAccessToken from '../../utils/AuthTokens';
 
 const Game = () => {
 
@@ -26,6 +27,7 @@ const Game = () => {
     const[opponentUsername, setOpponentUsername] = useState(null);
     const[isGameFinished, markGameFinished] = useState(false);
     const[gameWinner, setGameWinner] = useState(null);
+    // const[bearerToken, setBearerToken] = useState(null);
     const cookies = new Cookies();
 
     const printAccessTokenAndIdToken = async () => {
@@ -37,14 +39,52 @@ const Game = () => {
         catch (e) { console.log(e); }
     };
 
+    const createRequestAuthHeader = async () => {
+        try {
+            const accessToken = await getAccessToken();
+            const header = `Bearer ${accessToken}`
+            // setBearerToken(`Bearer ${accessToken}`);
+            console.log(`Fetched auth token: ${header}`);
+            return header;
+            // console.log(accessToken.payload.auth_time);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            return null;
+        }
+    }
+
+    class CustomHttpClient extends DefaultHttpClient {
+        async send(request) {
+            const header = await createRequestAuthHeader();
+            request.headers = { ...request.headers, "Authorization": header };
+            return super.send(request);
+        }
+    }
+
     // blockScroll();
 
     const joinGame = async(username) => {
         try {
+            // const header = await createRequestAuthHeader();
+            // console.log(header);
+            // const headers = { 'Authorization': header };
+            // console.log(headers);
+            // if (header !== null) {
+            //     console.log(header);
+            //     const headers = { 'Authorization': header };
+            //     console.log(headers);
+            // }
             const conn = new HubConnectionBuilder()
-                        .withUrl(`${process.env.REACT_APP_BACKEND_IP}/game`)
-                        .configureLogging(LogLevel.Information)
-                        .build();
+                .withUrl(`${process.env.REACT_APP_BACKEND_IP}/game`, { httpClient: new CustomHttpClient() })
+                .configureLogging(LogLevel.Information)
+                .build();
+            // console.log(bearerToken);
+            // const headers = { 'Authorization': bearerToken };
+            // console.log(headers);
+            // const conn = new HubConnectionBuilder()
+            //             .withUrl(`${process.env.REACT_APP_BACKEND_IP}/game`, headers)
+            //             .configureLogging(LogLevel.Information)
+            //             .build();
             setConnection(conn);
             conn.on("JoinGame", (hasGameStarted, username1, username2, msg) => {
                 console.log("Has game started: ", hasGameStarted, "msg: ", msg);

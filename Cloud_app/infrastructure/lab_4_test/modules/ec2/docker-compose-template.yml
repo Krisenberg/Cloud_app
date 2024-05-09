@@ -8,7 +8,7 @@ services:
     environment:
       - FRONTEND_IP=http://glowacz-ttt.us-east-1.elasticbeanstalk.com:3000
   frontend:
-    image: krisenberg/frontend:new-cognito
+    image: krisenberg/frontend:latest
     container_name: frontend
     ports:
       - "3000:3000"

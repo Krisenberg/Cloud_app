@@ -8,11 +8,14 @@ describe('sign', () => {
         // and some will just take secret signing keys
         const secret = 'SomeSecretValue';
 
-        const jwtOne = sign({
+        const token1 = sign({
             payload: { name: 'Tom' },
             secret,
             options: { expiresIn: 8.64e7 } // One day in milliseconds
-        }).split('.')[2];
+        });
+
+        console.log('JWT 1: ', token1); // Print generated token to verify it manually in jwt.io
+        const jwtOne = token1.split('.')[2];
 
         const jwtTwo = sign({
             payload: { name: 'Tom' },

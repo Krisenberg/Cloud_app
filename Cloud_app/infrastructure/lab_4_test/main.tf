@@ -30,8 +30,8 @@ module "network" {
 }
 
 # Attach the whole instance config using Elastic Beanstalk (configuration defined in the `elastic_beanstalk` module)
-module "beanstalk" {
-  source                      = "./modules/elastic_beanstalk/"
+module "ec2" {
+  source                      = "./modules/ec2/"
   cname_prefix                = var.cname_prefix
   method                      = var.method
   vpc_id                      = module.network.vpc_id
@@ -42,4 +42,5 @@ module "beanstalk" {
   cognito_region              = "us-east-1"
   cognito_user_pool_client_id = module.cognito.user_pool_client_id
   cognito_user_pool_id        = module.cognito.user_pool_id
+  ssh_key                     = var.ssh_key
 }
