@@ -37,6 +37,19 @@
   }
 } */
 
+.css-x7o5da-MuiPaper-root-MuiAlert-root {
+  background-color: #a0153f9c !important;
+  border-radius: 15px !important;
+  width: wrap-content !important;
+  padding-right: 20px !important;
+  margin: 0 30px 30px 30px !important;
+  color: whitesmoke !important;
+}
+
+.MuiAlert-icon {
+  color: whitesmoke !important;
+}
+
 .roboto-light {
   font-family: "Roboto", sans-serif;
   font-weight: 300;

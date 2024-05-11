@@ -1,11 +1,17 @@
 import classes from './Profile.module.css';
-import { Authenticator, Alert, Flex, Divider } from '@aws-amplify/ui-react';
+import { Authenticator, Flex, Divider } from '@aws-amplify/ui-react';
 import { Col, Row, Navbar, Container, Nav } from 'react-bootstrap';
 import '../../styles/App.css'
 import useScrollBlock from '../../utils/useScrollBlock';
 import { useState, useEffect } from "react";
 import getAccessToken from '../../utils/AuthTokens';
 import { jwtDecode } from 'jwt-decode';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import { fetchAuthSession } from '@aws-amplify/auth';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import { useAuthenticator } from '@aws-amplify/ui-react';
 
 
 const Profile = () => {
@@ -15,6 +21,32 @@ const Profile = () => {
     const [authTime, setAuthTime] = useState(null);
 
     // blockScroll();
+    const { authStatus } = useAuthenticator(context => [context.authStatus]);
+    // const authStatus = 'authenticated';
+    // const handleOpen = () => {
+    //     setCloseBackdrop(false);
+        // <div>
+        //     <Backdrop
+        //         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        //         open={closeBackdrop}
+        //     >
+        //         <CircularProgress color="inherit" />
+        //     </Backdrop>
+        // </div>
+    // };
+
+    // const handleClose = () => {
+    //     setCloseBackdrop(true);
+    // };
+
+    // async function checkIfUserIsLogged () {
+    //     const status = useAuthenticator(context => [context.authStatus]);
+
+    // }
+
+    // useEffect(() => {
+    //     checkIfUserIsLogged();
+    // });
 
     const fetchAuthTime = async () => {
         try {
@@ -64,53 +96,21 @@ const Profile = () => {
                     </Nav>
                 </Container>
             </Navbar>
-            {/* <Flex direction="column">
-                {isLoggedIn ? null :
-                    <Flex direction="column">
-                        <Alert variation="error">Please sign in!</Alert>
-                        <Divider
-                            className={`${classes.customDivider}`}
-                            label="wrg"
-                            size="large"
-                            orientation="horizontal" />
-                    </Flex>
-                }
-                <Authenticator>
-                    {({ signOut, user }) => {
-                        setLoggedInStatus(true);
-                        fetchAuthTime();
-                        // const time = authTime ? authTime : "";
-                        return (
-                            <Col sm={12} className={`${classes.contentColumn}`}>
-                                <h1 className={`${classes.headerText}`}>YOUR PROFILE</h1>
-                                <div className={`${classes.line}`}/>
-                                <Row className={`${classes.detailsRow}`}>
-                                    <Col className={`${classes.detailsColumn}`}>
-                                        <p className={`${classes.detailsText}`}>Username: {user.username}</p>
-                                        <p className={`${classes.detailsText}`}>Authenticated at: {formatDateFromUnix()}</p>
-                                    </Col>
-                                    <Col className={`${classes.halfColumn}`}>
-                                        <button className={`${classes.leaveButton}`} onClick={ () => { setLoggedInStatus(false); signOut(); window.location.reload(); } }><span className="text">Sign out</span></button>
-                                    </Col>
-                                </Row>
-                            </Col>
-                        );
-                    }}
-                </Authenticator>
-            </Flex> */}
             <Col sm={12} className={`${classes.mainColumn}`}>
-                {isLoggedIn ? null :
+                {authStatus === 'authenticated' ? null :
                     <div className={`${classes.notSignedColumn}`}>
-                        <p className={`roboto-light ${classes.notSignedText}`}>Please sign in!</p>
+                        <Alert severity="error">
+                            <AlertTitle>Not signed in</AlertTitle>
+                            Please sign in first using Amazon  AWS identity provider.
+                        </Alert>
+                        {/* <p className={`roboto-light ${classes.notSignedText}`}>Please sign in!</p> */}
                         <div className={`${classes.line}`}/>
                     </div>
                 }
-                
                 <Authenticator>
                     {({ signOut, user }) => {
                         setLoggedInStatus(true);
                         fetchAuthTime();
-                        // const time = authTime ? authTime : "";
                         return (
                             <Col sm={12} className={`${classes.contentColumn}`}>
                                 <h1 className={`${classes.headerText}`}>YOUR PROFILE</h1>
@@ -125,23 +125,6 @@ const Profile = () => {
                                     </Col>
                                 </Row>
                             </Col>
-                            // <main>
-                            //     <Col sm={12} className={`${classes.contentColumn}`}>
-                            //         <h1 className={`${classes.headerText}`}>YOUR PROFILE</h1>
-                            //         <div className={`${classes.line}`}/>
-                            //         <Row className={`${classes.detailsRow}`}>
-                            //             <Col className={`${classes.halfColumn}`}>
-                            //                 <p>Username: {user.username}</p>
-                            //                 <p>Authenticated at: ...</p>
-                            //             </Col>
-                            //             <Col className={`${classes.halfColumn}`}>
-                            //                 <button className={`${classes.leaveButton}`} role="button" type="submit"><span className="text">Leave</span></button>
-                            //             </Col>
-                            //         </Row>
-                            //     </Col>
-                            //     {/* <h1>Hello {user.username}, you are already signed in!</h1>
-                            //     <button className="customButton" onClick={ () => { setLoggedInStatus(false); signOut(); window.location.reload(); } }>Sign out</button> */}
-                            // </main>
                         );
                     }}
                 </Authenticator>

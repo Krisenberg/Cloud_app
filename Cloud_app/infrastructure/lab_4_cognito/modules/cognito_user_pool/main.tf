@@ -8,7 +8,7 @@ resource "aws_cognito_user_pool" "user_pool" {
   name = "tic-tac-toe_user-pool"
   
   password_policy {
-    minimum_length    = 6
+    minimum_length    = 8
     require_numbers   = true
     require_symbols   = false
     require_lowercase = false

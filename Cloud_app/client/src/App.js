@@ -20,6 +20,7 @@ import { Routes, Route, Link } from 'react-router-dom';
 import Menu from './pages/Menu';
 import Profile from './pages/Profile';
 import Game from './pages/Game';
+import Error_404 from './pages/Error_404';
 
 function App() {
   return (
@@ -29,7 +30,7 @@ function App() {
           <Route path="/" element={<Menu></Menu>} />
           <Route path="/profile" element={<Profile></Profile>} />
           <Route path="/game" element={<Game></Game>} />
-          <Route path="*" element={<p>There's nothing here: 404!</p>} />
+          <Route path="*" element={<Error_404></Error_404>} />
         </Routes>
       </Authenticator.Provider>
     </div>

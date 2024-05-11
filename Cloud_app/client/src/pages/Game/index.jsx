@@ -12,6 +12,8 @@ import GameResult from '../../components/GameResult'
 import PreventUnload from '../../utils/PreventUnload';
 import { fetchAuthSession } from '@aws-amplify/auth';
 import getAccessToken from '../../utils/AuthTokens';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 
 const Game = () => {
 
@@ -122,7 +124,7 @@ const Game = () => {
         if (!hasUserJoinedGame)
             return <WaitingRoom isLoggedIn={isLoggedIn} joinGame={joinGame}></WaitingRoom>;
         // var username = cookies.get("username");
-        if (!hasGameStarted)
+        if (!hasGameStarted){
             return (
                 <div className={`${classes.contentContainer}`}>
                     <PreventUnload></PreventUnload>
@@ -133,6 +135,7 @@ const Game = () => {
                     </Col>
                 </div>
             )
+        }
         if (isGameFinished) {
             if (gameWinner === null){
             return <GameResult hasUserWon={false} isDraw={true}></GameResult>
@@ -175,7 +178,11 @@ const Game = () => {
             <Col sm={12} className={`${classes.mainColumn}`}>
                 {isLoggedIn ? null :
                     <div className={`${classes.notSignedColumn}`}>
-                        <p className={`roboto-light ${classes.notSignedText}`}>You have to log in to play the game!</p>
+                        <Alert severity="error" style={{width: "wrap-content !important"}}>
+                            <AlertTitle>Not signed in</AlertTitle>
+                            You can play only after authorization (Amazon AWS identity provider).
+                        </Alert>
+                        {/* <p className={`roboto-light ${classes.notSignedText}`}>You have to log in to play the game!</p> */}
                         <div className={`${classes.line}`}/>
                     </div>
                 }
