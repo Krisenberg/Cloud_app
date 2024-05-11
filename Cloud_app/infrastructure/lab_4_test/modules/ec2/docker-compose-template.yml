@@ -1,19 +1,21 @@
 version: '3'
 services:
   backend:
-    image: krisenberg/backend:latest
+    image: krisenberg/backend:dev
     container_name: backend
     ports:
       - "8080:80"
     environment:
-      - FRONTEND_IP=http://glowacz-ttt.us-east-1.elasticbeanstalk.com:3000
+      - FRONTEND_IP=http://${public_ip}:3000
+      - COGNITO_REGION=${region}
+      - COGNITO_USER_POOL_ID=${user_pool_id}
   frontend:
-    image: krisenberg/frontend:latest
+    image: krisenberg/frontend:dev
     container_name: frontend
     ports:
       - "3000:3000"
     environment:
-      - REACT_APP_BACKEND_IP=http://glowacz-ttt.us-east-1.elasticbeanstalk.com:8080
+      - REACT_APP_BACKEND_IP=http://${public_ip}:8080
       - REACT_APP_COGNITO_REGION=${region}
       - REACT_APP_COGNITO_USER_POOL_CLIENT_ID=${user_pool_client_id}
       - REACT_APP_COGNITO_USER_POOL_ID=${user_pool_id}

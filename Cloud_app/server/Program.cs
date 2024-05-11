@@ -1,4 +1,6 @@
 //using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using server;
 using server.DataService;
 using server.Hubs;
 using System.Runtime.CompilerServices;
@@ -10,9 +12,14 @@ builder.Services.AddSignalR();
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer();
+builder.Services.ConfigureOptions<JWTBearerConfigureOptions>();
 
 var allowedOrigin = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
+
+DotNetEnv.Env.Load();
 
 // Add services to the container.
 builder.Services.AddCors(options =>
@@ -49,59 +56,35 @@ app.UseCors("reactFrontend");
 //app.UseSwagger();
 //app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
-var users = new List<User>();
-users.Add(new User("Jas", "Fasola"));
+var users = new List<Test>();
+users.Add(new Test("Krzysztof Glowacz", DateTime.Now));
 
-app.MapGet("/users", () =>
+app.MapGet("/test", () =>
 {
     return users;
 });
 
-app.MapPost("/signup", (UserData userData) =>
-{
-    User user = new User(userData.Username, userData.Password);
-    users.Add(user);
-    return Results.Ok(user);
-});
+app.MapHub<GameHub>("/game")
+    .RequireAuthorization();
 
-app.MapHub<GameHub>("/game");
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.Run();
 
-class UserData
+class Test
 {
-    public required string Username { get; set; }
-    public required string Password { get; set; }
-}
+    public Guid ID { get; set; }
+    public string Author { get; set; }
+    public string Date { get; set; }
 
-class User
-{
-    public Guid UserID { get; set; }
-    public string Username { get; set; }
-    public string Password { get; set; }
-
-    public User(string username, string password)
+    public Test(string author, DateTime date)
     {
-        UserID = Guid.NewGuid();
-        Username = username;
-        Password = BCrypt.Net.BCrypt.EnhancedHashPassword(password);
-    }
-
-    public bool VerifyPassword(string providedPassword)
-    {
-        return BCrypt.Net.BCrypt.EnhancedVerify(providedPassword, Password);
-    }
-
-    public string CreateToken()
-    {
-        return UserID.ToString() + "&&&" + Username;
-        //List<Claim> claims = new List<Claim>
-        //{
-        //    new Claim(ClaimTypes.Name, Username)
-        //};
-
-        //var key = new SymmetricSecurityKey();
+        ID = Guid.NewGuid();
+        Author = author;
+        Date = date.ToString();
     }
 
 }

@@ -1,19 +1,21 @@
 version: '3'
 services:
   backend:
-    image: krisenberg/backend:latest
+    image: back:dev
     container_name: backend
     ports:
       - "8080:80"
     environment:
       - FRONTEND_IP=http://localhost:3000
+      - COGNITO_REGION=us-east-1
+      - COGNITO_USER_POOL_ID=us-east-1_bEqnwL4fr
   frontend:
-    image: krisenberg/frontend:cognito
+    image: front:dev
     container_name: frontend
     ports:
       - "3000:3000"
     environment:
       - REACT_APP_BACKEND_IP=http://localhost:8080
       - REACT_APP_COGNITO_REGION=us-east-1
-      - REACT_APP_COGNITO_USER_POOL_CLIENT_ID=2u6t3m7cdd99mkcdqjj0919has
-      - REACT_APP_COGNITO_USER_POOL_ID=us-east-1_gDMVVaB0b
+      - REACT_APP_COGNITO_USER_POOL_CLIENT_ID=1pj17ni5tk2gb78sbq3c2rcep2
+      - REACT_APP_COGNITO_USER_POOL_ID=us-east-1_bEqnwL4fr

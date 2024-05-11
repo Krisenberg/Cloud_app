@@ -198,3 +198,12 @@
   transform: scaleX(1); /* Scale the underline on hover */
   transform-origin: bottom left; /* Set transform origin */
 }
+
+.redErrorPopup {
+  width: 80%;
+  background-color: #872341;
+  border-radius: 15px;
+  color: whitesmoke;
+  margin: 15px;
+  align-items: center;
+}

@@ -26,6 +26,15 @@
   color: #FF204E;
 }
 
+.amplify-alert {
+  background-color: #FF204E;
+}
+
+.customDivider {
+  border: 3px solid whitesmoke;
+  border-radius: 10px;
+}
+
 .contentColumn {
   display: flex;
   flex-direction: column;
