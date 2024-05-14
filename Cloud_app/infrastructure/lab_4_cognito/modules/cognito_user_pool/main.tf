@@ -1,7 +1,14 @@
 resource "aws_cognito_user_pool_client" "client" {
   name = "ttt_user-pool_client"
-
   user_pool_id = aws_cognito_user_pool.user_pool.id
+
+  token_validity_units {
+    access_token = "minutes"
+    refresh_token = "minutes"
+  }
+  
+  access_token_validity = 5
+  refresh_token_validity = 60
 }
 
 resource "aws_cognito_user_pool" "user_pool" {
@@ -9,7 +16,7 @@ resource "aws_cognito_user_pool" "user_pool" {
   
   password_policy {
     minimum_length    = 8
-    require_numbers   = true
+    require_numbers   = false
     require_symbols   = false
     require_lowercase = false
     require_uppercase = false

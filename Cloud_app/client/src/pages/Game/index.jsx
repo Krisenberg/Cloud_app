@@ -14,13 +14,15 @@ import { fetchAuthSession } from '@aws-amplify/auth';
 import getAccessToken from '../../utils/AuthTokens';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
+import { checkAccessToken } from '../../utils/CheckAuth';
+import { jwtDecode } from 'jwt-decode';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const Game = () => {
 
-    const [blockScroll, allowScroll] = useScrollBlock();
-    const { authStatus, user } = useAuthenticator(context => [context.authStatus, context.user]);
-    // const { user, signOut } = useAuthenticator((context) => [context.user]);
-    const isLoggedIn = (authStatus === 'authenticated');
+    // const { authStatus, user } = useAuthenticator(context => [context.authStatus, context.user]);
+    // const isLoggedIn = (authStatus === 'authenticated');
     const[conn, setConnection] = useState();
     const[hasUserJoinedGame, setUserJoinStatus] = useState(false);
     const[hasGameStarted, setGameStatus] = useState(false);
@@ -29,8 +31,35 @@ const Game = () => {
     const[opponentUsername, setOpponentUsername] = useState(null);
     const[isGameFinished, markGameFinished] = useState(false);
     const[gameWinner, setGameWinner] = useState(null);
-    // const[bearerToken, setBearerToken] = useState(null);
     const cookies = new Cookies();
+
+    const [accessToken, setAccessToken] = useState(null);
+    const [cognitoUsername, setCognitoUsername] = useState(null);
+    const [isLoading, setLoading] = useState(true);
+
+    const isLoggedIn = (accessToken !== null);
+
+    useEffect(() => {
+        const asyncFn = async () => { await fetchCognitoUsername(); };
+        asyncFn();
+        console.log('HERE');
+        setLoading(false);
+    }, []);
+
+    const fetchCognitoUsername = async () => {
+        try {
+            const result = await checkAccessToken();
+            if (result) {
+                const rawToken = localStorage.getItem(`${process.env.REACT_APP_LOCAL_STORAGE_AUTH_TOKEN}`);
+                const decodedToken = jwtDecode(rawToken);
+                setAccessToken(rawToken);
+                console.log('ACCESS TOKEN ->', rawToken);
+                setCognitoUsername(decodedToken.username);
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
 
     const printAccessTokenAndIdToken = async () => {
         try {
@@ -41,9 +70,9 @@ const Game = () => {
         catch (e) { console.log(e); }
     };
 
-    const createRequestAuthHeader = async () => {
+    const createRequestAuthHeader = () => {
         try {
-            const accessToken = await getAccessToken();
+            // const accessToken = localStorage.getItem(`${process.env.REACT_APP_COGNITO_REGION}`);
             const header = `Bearer ${accessToken}`
             // setBearerToken(`Bearer ${accessToken}`);
             console.log(`Fetched auth token: ${header}`);
@@ -57,36 +86,20 @@ const Game = () => {
 
     class CustomHttpClient extends DefaultHttpClient {
         async send(request) {
-            const header = await createRequestAuthHeader();
+            const header = createRequestAuthHeader();
             request.headers = { ...request.headers, "Authorization": header };
             return super.send(request);
         }
     }
 
-    // blockScroll();
-
     const joinGame = async(username) => {
         try {
-            // const header = await createRequestAuthHeader();
-            // console.log(header);
-            // const headers = { 'Authorization': header };
-            // console.log(headers);
-            // if (header !== null) {
-            //     console.log(header);
-            //     const headers = { 'Authorization': header };
-            //     console.log(headers);
-            // }
+            
             const conn = new HubConnectionBuilder()
                 .withUrl(`${process.env.REACT_APP_BACKEND_IP}/game`, { httpClient: new CustomHttpClient() })
                 .configureLogging(LogLevel.Information)
                 .build();
-            // console.log(bearerToken);
-            // const headers = { 'Authorization': bearerToken };
-            // console.log(headers);
-            // const conn = new HubConnectionBuilder()
-            //             .withUrl(`${process.env.REACT_APP_BACKEND_IP}/game`, headers)
-            //             .configureLogging(LogLevel.Information)
-            //             .build();
+
             setConnection(conn);
             conn.on("JoinGame", (hasGameStarted, username1, username2, msg) => {
                 console.log("Has game started: ", hasGameStarted, "msg: ", msg);
@@ -129,7 +142,8 @@ const Game = () => {
                 <div className={`${classes.contentContainer}`}>
                     <PreventUnload></PreventUnload>
                     <Col sm={12} className={`${classes.contentColumn}`}>
-                        <h2 className={`${classes.waitingHeader}`}><span className={`${classes.userDataColor}`}>{playerUsername} [{user.username}]</span>, you are the first one in the queue.</h2>
+                        {/* <h2 className={`${classes.waitingHeader}`}><span className={`${classes.userDataColor}`}>{playerUsername} [{user.username}]</span>, you are the first one in the queue.</h2> */}
+                        <h2 className={`${classes.waitingHeader}`}><span className={`${classes.userDataColor}`}>{playerUsername} [{cognitoUsername}]</span>, you are the first one in the queue.</h2>
                         <div className={`${classes.line}`}/>
                         <h2 className={`${classes.detailsText}`}>please wait for the opponent...</h2>
                     </Col>
@@ -148,7 +162,18 @@ const Game = () => {
             // return <h1 className='font-weight'>Waiting for the opponent...</h1>;
         return (<GameData playerMark={playerMark} conn={conn} username={playerUsername} opponentUsername={opponentUsername}></GameData>)
     }
-
+    if (isLoading) {
+        return (
+            <div>
+                <Backdrop
+                    sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                    open={isLoading}
+                >
+                    <CircularProgress color="inherit" />
+                </Backdrop>
+            </div>
+        )
+    }
     return (
         <Container>
             <Navbar className="navbar">
