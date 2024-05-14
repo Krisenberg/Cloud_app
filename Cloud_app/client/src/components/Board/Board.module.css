@@ -24,16 +24,6 @@
   text-align: center;
 }
 
-/* .occupiedCellRed{
-  background-color: #535C91;
-  opacity: 0.5;
-  line-height: 15vh;
-  border: 2px solid;
-  border-color: #FF204E;
-  text-align: center;
-  vertical-align: middle;
-} */
-
 .disabledCell{
   background-color: #535C91;
   opacity: 0.5;
@@ -99,10 +89,3 @@ p {
   padding: 0;
   margin: 0;
 }
-
-/* #cellContainer{
-  display: grid;
-  grid-template-columns: repeat(3, auto);
-  width: 50%;
-  margin: auto;
-} */

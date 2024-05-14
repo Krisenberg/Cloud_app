@@ -16,9 +16,6 @@ const GameResult = ({ hasUserWon, isDraw }) => {
 
     if(isDraw) {
         return (
-            // <Col className='px-5 py-5'>
-            //     <h2>Draw!</h2>
-            // </Col>
             <div className={`${classes.contentContainer}`}>
                 <Col sm={12} className={`${classes.contentColumn}`}>
                     <h2 className={`${classes.resultText}`}><span className={`${classes.drawColor}`}>Draw</span></h2>
@@ -37,11 +34,6 @@ const GameResult = ({ hasUserWon, isDraw }) => {
     }
     if(hasUserWon) {
         return (
-            // <Col className='px-5 py-5'>
-            //     <h2>Congratulations!</h2>
-            //     <hr></hr>
-            //     <h2>You won!</h2>
-            // </Col>
             <div className={`${classes.contentContainer}`}>
                 <Col sm={12} className={`${classes.contentColumn}`}>
                     <h2 className={`${classes.resultText}`}><span className={`${classes.winColor}`}>Win</span></h2>
@@ -59,9 +51,6 @@ const GameResult = ({ hasUserWon, isDraw }) => {
         )
     }
     return (
-        // <Col className='px-5 py-5'>
-        //     <h2>You lost...</h2>
-        // </Col>
         <div className={`${classes.contentContainer}`}>
             <Col sm={12} className={`${classes.contentColumn}`}>
                 <h2 className={`${classes.resultText}`}><span className={`${classes.lossColor}`}>Loss</span></h2>

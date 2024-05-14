@@ -4,28 +4,12 @@ resource "local_file" "deployment_compose" {
       region=var.cognito_region
       user_pool_client_id=var.cognito_user_pool_client_id
       user_pool_id=var.cognito_user_pool_id
-      public_ip=aws_instance.tic_tac_toe.public_ip
+      app_url="http://${aws_instance.tic_tac_toe.public_ip}"
     }
   )
   filename = "${path.module}/docker-compose.yml"
   depends_on = [aws_instance.tic_tac_toe]
 }
-
-# # Create AWS S3 bucket which will be used for storing docker-compose.yml file
-# resource "aws_s3_bucket" "l3-ttt-s3-bucket" {
-#   bucket = "l3-ttt-s3-bucket"
-#   tags   = {
-#     Name = "l3-ttt-s3-bucket"
-#   }
-# }
-
-# # Create an object inside the S3 bucket - app's docker-compose file
-# resource "aws_s3_object" "l3-ttt-s3-object" {
-#   bucket = aws_s3_bucket.l3-ttt-s3-bucket.bucket
-#   source = "${path.module}/docker-compose.yml"
-#   key    = "docker-compose.yml"
-#   depends_on = [local_file.deployment_compose]
-# }
 
 # Create the instance using some specific AMI, type t2.micro is perfectly fine for our needs
 # Attach the subnet, security group, (optionally ssh key name)

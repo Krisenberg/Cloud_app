@@ -33,18 +33,6 @@ Amplify.configure({
       region: `${process.env.REACT_APP_COGNITO_REGION}`,
       userPoolClientId: `${process.env.REACT_APP_COGNITO_USER_POOL_CLIENT_ID}`,
       userPoolId: `${process.env.REACT_APP_COGNITO_USER_POOL_ID}`,
-      // loginWith: { // Optional
-      //   oauth: {
-      //     domain: 'abcdefghij1234567890-29051e27.auth.us-east-1.amazoncognito.com',
-      //     scopes: ['openid email phone profile aws.cognito.signin.user.admin '],
-      //     redirectSignIn: ['http://localhost:3000/','https://example.com/'],
-      //     redirectSignOut: ['http://localhost:3000/','https://example.com/'],
-      //     responseType: 'code',
-      //   },
-      //   username: 'true',
-      //   email: 'false', // Optional
-      //   phone: 'false', // Optional
-      // }
     }
   }
 });

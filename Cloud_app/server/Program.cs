@@ -9,8 +9,6 @@ using System.Security.Claims;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSignalR();
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -28,10 +26,6 @@ builder.Services.AddCors(options =>
     //     policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials());
     options.AddPolicy("reactFrontend", policy =>
     {
-        // policy.WithOrigins(allowedOrigin)
-        //         .AllowAnyHeader()
-        //         .AllowAnyMethod()
-        //         .AllowCredentials();
         string frontend_ip = Environment.GetEnvironmentVariable("FRONTEND_IP") ?? "http://localhost:3000";
         policy.WithOrigins(frontend_ip)
                 .AllowAnyHeader()
@@ -45,16 +39,6 @@ builder.Services.AddSingleton<GameDb>();
 var app = builder.Build();
 
 app.UseCors("reactFrontend");
-
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
-
-//app.UseSwagger();
-//app.UseSwaggerUI();
 
 //app.UseHttpsRedirection();
 

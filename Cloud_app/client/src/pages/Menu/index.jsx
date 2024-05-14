@@ -1,7 +1,6 @@
 import React from "react";
 import classes from './Menu.module.css';
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 
 const Menu = () => {
 

@@ -14,15 +14,10 @@ terraform {
 # optionally add a profile name (from the file .aws/credentials)
 provider "aws" {
   region = "us-east-1"
-  profile = "krzysztof.glowacz"
+  profile = var.credentials_profile
 }
 
-resource "aws_cognito_user_pool_client" "client" {
-  name = "ttt_user-pool_client"
-
-  user_pool_id = aws_cognito_user_pool.user_pool.id
-}
-
-resource "aws_cognito_user_pool" "user_pool" {
-  name = "tic-tac-toe_user-pool"
+# Create cognito user pool using `cognito_user_pool` module
+module "cognito" {
+  source            = "./modules/cognito_user_pool/"
 }

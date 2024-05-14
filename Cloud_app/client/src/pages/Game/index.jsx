@@ -1,8 +1,6 @@
 import classes from './Game.module.css';
-import { useAuthenticator } from '@aws-amplify/ui-react';
-import { Col, Row, Navbar, Container, Nav } from 'react-bootstrap';
+import { Col, Navbar, Container, Nav } from 'react-bootstrap';
 import '../../styles/App.css'
-import useScrollBlock from '../../utils/useScrollBlock';
 import { useState, useEffect } from "react";
 import Cookies from "universal-cookie";
 import { HubConnectionBuilder, LogLevel, DefaultHttpClient } from '@microsoft/signalr'
@@ -10,19 +8,15 @@ import WaitingRoom from '../../components/WaitingRoom'
 import GameData from '../../components/GameData'
 import GameResult from '../../components/GameResult'
 import PreventUnload from '../../utils/PreventUnload';
-import { fetchAuthSession } from '@aws-amplify/auth';
 import getAccessToken from '../../utils/AuthTokens';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
-import { checkAccessToken } from '../../utils/CheckAuth';
 import { jwtDecode } from 'jwt-decode';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 
 const Game = () => {
 
-    // const { authStatus, user } = useAuthenticator(context => [context.authStatus, context.user]);
-    // const isLoggedIn = (authStatus === 'authenticated');
     const[conn, setConnection] = useState();
     const[hasUserJoinedGame, setUserJoinStatus] = useState(false);
     const[hasGameStarted, setGameStatus] = useState(false);
@@ -48,7 +42,7 @@ const Game = () => {
 
     const fetchCognitoUsername = async () => {
         try {
-            const result = await checkAccessToken();
+            const result = await getAccessToken();
             if (result) {
                 const rawToken = localStorage.getItem(`${process.env.REACT_APP_LOCAL_STORAGE_AUTH_TOKEN}`);
                 const decodedToken = jwtDecode(rawToken);
@@ -60,15 +54,6 @@ const Game = () => {
             console.error('Error fetching data:', error);
         }
     }
-
-    const printAccessTokenAndIdToken = async () => {
-        try {
-            const session = await fetchAuthSession();   // Fetch the authentication session
-            console.log('Access Token:', session.tokens.accessToken.toString());
-            console.log('ID Token:', session.tokens.idToken.toString());
-        }
-        catch (e) { console.log(e); }
-    };
 
     const createRequestAuthHeader = () => {
         try {

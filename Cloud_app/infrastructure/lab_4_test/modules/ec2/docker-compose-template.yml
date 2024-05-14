@@ -6,7 +6,7 @@ services:
     ports:
       - "8080:80"
     environment:
-      - FRONTEND_IP=http://${public_ip}:3000
+      - FRONTEND_IP=${app_url}:3000
       - COGNITO_REGION=${region}
       - COGNITO_USER_POOL_ID=${user_pool_id}
   frontend:
@@ -15,7 +15,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - REACT_APP_BACKEND_IP=http://${public_ip}:8080
+      - REACT_APP_BACKEND_IP=${app_url}:8080
       - REACT_APP_COGNITO_REGION=${region}
       - REACT_APP_COGNITO_USER_POOL_CLIENT_ID=${user_pool_client_id}
       - REACT_APP_COGNITO_USER_POOL_ID=${user_pool_id}
+      - REACT_APP_LOCAL_STORAGE_AUTH_TOKEN=tic_tac_toe_access_token

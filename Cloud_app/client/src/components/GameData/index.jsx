@@ -26,20 +26,8 @@ const GameData = ({ playerMark, conn, username, opponentUsername }) => {
                 </Col>
             </Row>
             <div className={`${classes.line}`}/>
-            {/* {isLoggedIn ? null :
-                <div className={`${classes.notSignedColumn}`}>
-                    <p className={`roboto-light ${classes.notSignedText}`}>You have to log in to play the game!</p>
-                    <div className={`${classes.line}`}/>
-                </div>
-            }
-            <Row sm={12}>
-              <hr></hr>
-              <h2>Hi {username},</h2>
-              <h2>you are playing against: {opponentUsername}</h2>
-            </Row> */}
             <div className={`${classes.gameContainer}`}>
                 <Board playerMark={ playerMark } conn={ conn } username={ username } setPlayersTurn={ setPlayersTrun }></Board>
-                { /*LEAVE GAME BUTTON */ }
             </div>
         </Col>
     )

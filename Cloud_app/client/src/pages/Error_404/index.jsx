@@ -42,14 +42,4 @@ const ErrorMessage = () => {
   );
 }
 
-// const ErrorMessage = () => {
-//   return (
-//     <Flex direction="column" className={`${classes.messageContainer}`}>
-//       <Alert variant="outlined" severity="error" className={`${classes.errorMessage}`}>
-//         This is an outlined error Alert.
-//       </Alert>
-//     </Flex>
-//   );
-// };
-
 export default ErrorMessage;
