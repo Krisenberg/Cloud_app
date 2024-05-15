@@ -11,7 +11,7 @@ const GameResult = ({ hasUserWon, isDraw }) => {
     }
 
     function navigateToPlayAgain() {
-        navigate("/game");
+        window.location.reload();
     }
 
     if(isDraw) {
