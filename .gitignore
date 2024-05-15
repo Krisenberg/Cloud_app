@@ -705,3 +705,5 @@ node_modules
 
 # compose/ folder - not used, created for env variables tests
 **/compose/
+
+*.zip
