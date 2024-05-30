@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using CloudStorage;
 using CloudStorage.Models;
 using DotNetEnv;
+using Microsoft.AspNetCore.Builder;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,15 +18,25 @@ builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 builder.Services.AddAWSService<IAmazonS3>();
 
 string? saPassword = Environment.GetEnvironmentVariable("MSSQL_SA_PASSWORD");
+string? databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 var connectionString = builder.Configuration.GetConnectionString("FileStorageDb");
 
 if (connectionString != null)
+{
     connectionString = connectionString.Replace("<MSSQL_SA_PASSWORD>", saPassword);
+    connectionString = connectionString.Replace("<DATABASE_URL>", databaseUrl);
+}
 
 builder.Services.AddDbContextPool<FileStorageDb>(options =>
     options.UseSqlServer(connectionString));
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<FileStorageDb>();
+    dbContext.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -44,18 +55,20 @@ app.UseAuthorization();
 
 //app.MapRazorPages();
 
+app.MapGet("/test", () => "Example response - this endpoint is working!");
+
 app.MapGet("/files", async (FileStorageDb db) =>
     await db.Files.ToListAsync());
 
-app.MapPost("/todoitems", async (FileEntry file, FileStorageDb db) =>
+app.MapPost("/files", async (FileEntry file, FileStorageDb db) =>
 {
     db.Files.Add(file);
     await db.SaveChangesAsync();
 
-    return Results.Created($"/fileentries/{file.Id}", file);
+    return Results.Created($"/files/{file.Id}", file);
 });
 
-app.MapPut("/todoitems/{id}", async (int id, FileEntry newFileData, FileStorageDb db) =>
+app.MapPut("/files/{id}", async (int id, FileEntry newFileData, FileStorageDb db) =>
 {
     var file = await db.Files.FindAsync(id);
 
