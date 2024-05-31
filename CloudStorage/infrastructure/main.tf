@@ -25,6 +25,12 @@ module "network" {
   port_frontend     = var.port_frontend
 }
 
+# Attach the s3 bucket using `s3` module
+module "s3" {
+  source            = "./modules/s3/"
+  s3_bucket_name    = var.s3_bucket_name
+}
+
 # Attach the whole instance config using Elastic Beanstalk (configuration defined in the `elastic_beanstalk` module)
 module "ec2" {
   source                      = "./modules/ec2/"
