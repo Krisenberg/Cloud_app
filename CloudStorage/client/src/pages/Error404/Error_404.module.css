@@ -1,0 +1,9 @@
+.messageContainer {
+    align-items: center;
+    justify-content: center;
+    margin: 10vh;
+}
+
+.errorHeading {
+    font-size: 5rem;
+}

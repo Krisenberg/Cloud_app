@@ -10,6 +10,9 @@ using Amazon.S3.Model;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using CloudStorage.Utils;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http.HttpResults;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -100,7 +103,21 @@ builder.Services.AddDbContextPool<FileStorageDb>(options =>
 //    return new VerifyDatabaseEntries(s3Bucket: s3Bucket, db: db, s3: s3);
 //});
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("reactFrontend", policy =>
+    {
+        string frontend_ip = Environment.GetEnvironmentVariable("APP_FRONTEND") ?? "http://localhost:3000";
+        policy.WithOrigins(frontend_ip)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
 var app = builder.Build();
+
+app.UseCors("reactFrontend");
 
 using (var scope = app.Services.CreateScope())
 {
@@ -125,7 +142,14 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.UseExceptionHandler("/error");
+
 //app.MapRazorPages();
+
+app.Map("/error", () =>
+{
+    return Results.Problem(detail: "Internal server error", statusCode: 500);
+});
 
 app.MapGet("/test", () => "Example response - this endpoint is working!");
 
