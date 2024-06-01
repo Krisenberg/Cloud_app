@@ -4,12 +4,12 @@
     {
         public int Id { get; set; }
         public string? FileName { get; set; }
-        public string? S3Url { get; set; }
+        public string? S3Key { get; set; }
 
-        public FileEntry(string? fileName, string? s3Url)
+        public FileEntry(string? fileName, string? s3Key)
         {
             FileName = fileName;
-            S3Url = s3Url;
+            S3Key = s3Key;
         }
     }
 }

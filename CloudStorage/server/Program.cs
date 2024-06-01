@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Builder;
 using Amazon.Extensions.NETCore.Setup;
 using Amazon.Runtime;
 using Amazon.S3.Model;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
+using CloudStorage.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -89,11 +92,21 @@ if (connectionString != null)
 builder.Services.AddDbContextPool<FileStorageDb>(options =>
     options.UseSqlServer(connectionString));
 
+//builder.Services.AddHostedService<VerifyDatabaseEntries>(serviceProvider =>
+//{
+//    var db = serviceProvider.GetRequiredService<FileStorageDb>();
+//    var s3 = serviceProvider.GetRequiredService<IAmazonS3>();
+
+//    return new VerifyDatabaseEntries(s3Bucket: s3Bucket, db: db, s3: s3);
+//});
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<FileStorageDb>();
+    var s3Service = scope.ServiceProvider.GetRequiredService<IAmazonS3>();
+    await VerifyDatabaseEntries.VerifyDatabase(s3Bucket, dbContext, s3Service);
     dbContext.Database.Migrate();
 }
 
@@ -127,6 +140,50 @@ app.MapGet("/api/files", async (FileStorageDb db) =>
 //    return Results.Created($"/files/{file.Id}", file);
 //});
 
+app.MapGet("/api/files/{id}", async (int id, IAmazonS3 s3, FileStorageDb db) =>
+{
+    FileEntry? fileEntry = await db.Files.FindAsync(id);
+
+    if (fileEntry == null)
+        return Results.NotFound(value: "File with provided id not found in the database");
+
+    var request = new GetObjectRequest()
+    {
+        BucketName = s3Bucket,
+        Key = fileEntry.S3Key,
+    };
+
+    GetObjectResponse? response = null;
+    try
+    {
+        response = await s3.GetObjectAsync(request);
+    }
+    catch (Exception e)
+    {
+        return Results.NotFound(e.Message);
+    }
+
+    if (response == null)
+        return Results.NotFound("File could not be downloaded from S3 bucket");
+
+    //Stream fileStream = Stream.Null;
+    //using (response)
+    //{
+    //    await response.ResponseStream.Co;
+    //    //var fileStream = response.ResponseStream;
+    //    //var contentType = response.Headers["Content-Type"];
+    //    //var fileName = fileEntry.FileName;
+    //    //return Results.File(fileStream: fileStream, contentType: contentType, fileDownloadName: fileName);
+    //}
+    //var contentType = response.Headers["Content-Type"];
+    //var fileName = fileEntry.FileName;
+    return Results.File(
+        fileStream: response.ResponseStream,
+        contentType: response.Headers["Content-Type"],
+        fileDownloadName: fileEntry.FileName
+    );
+});
+
 app.MapPost("/api/files", async (IFormFile file, IAmazonS3 s3, FileStorageDb db) =>
 {
     if (file == null || file.Length == 0)
@@ -144,7 +201,7 @@ app.MapPost("/api/files", async (IFormFile file, IAmazonS3 s3, FileStorageDb db)
     var response = await s3.PutObjectAsync(request);
     if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
     {
-        var fileEntry = new FileEntry(file.FileName, fileKey);
+        var fileEntry = new FileEntry(fileName: file.FileName, s3Key: fileKey);
         db.Files.Add(fileEntry);
         await db.SaveChangesAsync();
 
@@ -160,7 +217,7 @@ app.MapPut("/files/{id}", async (int id, FileEntry newFileData, FileStorageDb db
     if (file is null) return Results.NotFound();
 
     file.FileName = newFileData.FileName;
-    file.S3Url = newFileData.S3Url;
+    file.S3Key = newFileData.S3Key;
 
     await db.SaveChangesAsync();
 
