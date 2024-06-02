@@ -128,10 +128,10 @@ app.UseCors("reactFrontend");
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<FileStorageDb>();
-    //var s3Service = scope.ServiceProvider.GetRequiredService<IAmazonS3>();
-    //dbContext.Database.Migrate();
-    //await VerifyDatabaseEntries.VerifyDatabase(s3Bucket, dbContext, s3Service);
+    var s3Service = scope.ServiceProvider.GetRequiredService<IAmazonS3>();
     dbContext.Database.Migrate();
+    await VerifyDatabaseEntries.VerifyDatabase(s3Bucket, dbContext, s3Service);
+    //dbContext.Database.Migrate();
 }
 
 // Configure the HTTP request pipeline.
