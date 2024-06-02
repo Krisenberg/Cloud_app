@@ -94,6 +94,11 @@ if (connectionString != null)
 
 builder.Services.AddDbContextPool<FileStorageDb>(options =>
     options.UseSqlServer(connectionString));
+        //sqlServerOptionsAction: sqlOptions =>
+        //{
+        //    sqlOptions.EnableRetryOnFailure();
+        //})
+    //);
 
 //builder.Services.AddHostedService<VerifyDatabaseEntries>(serviceProvider =>
 //{
@@ -111,7 +116,8 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(frontend_ip)
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials();
+            .AllowCredentials()
+            .WithExposedHeaders("Content-Disposition");
     });
 });
 
@@ -122,8 +128,9 @@ app.UseCors("reactFrontend");
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<FileStorageDb>();
-    var s3Service = scope.ServiceProvider.GetRequiredService<IAmazonS3>();
-    await VerifyDatabaseEntries.VerifyDatabase(s3Bucket, dbContext, s3Service);
+    //var s3Service = scope.ServiceProvider.GetRequiredService<IAmazonS3>();
+    //dbContext.Database.Migrate();
+    //await VerifyDatabaseEntries.VerifyDatabase(s3Bucket, dbContext, s3Service);
     dbContext.Database.Migrate();
 }
 
@@ -154,7 +161,12 @@ app.Map("/error", () =>
 app.MapGet("/test", () => "Example response - this endpoint is working!");
 
 app.MapGet("/api/files", async (FileStorageDb db) =>
-    await db.Files.ToListAsync());
+{
+    List<FileEntry> fileEntries = await db.Files.ToListAsync();
+    List<FileDTO> fileDTOs = fileEntries.Select(file => 
+        new FileDTO(id: file.Id, filename: file.FileName)).ToList();
+    return fileDTOs;
+});
 
 //app.MapPost("/api/files", async (FileEntry file, FileStorageDb db) =>
 //{

@@ -1,0 +1,33 @@
+.placeholder {
+    width: 60%;
+}
+
+.actionButton{
+    font-size: 1.5rem;
+    color: var(--custom-fourth);
+}
+
+.actionButton:hover{
+    cursor: pointer;
+}
+
+.table {
+    width: 60%;
+}
+
+.tableHeader {
+    font-size: 1.5rem;
+    color: var(--custom-third);
+}
+
+.tableActionsHeader {
+    font-size: 1.5rem;
+    color: var(--custom-third);
+    text-align: end;
+    padding-right: 30px;
+}
+
+.tableCell {
+    font-size: 1rem;
+    color: var(--text-color);
+}

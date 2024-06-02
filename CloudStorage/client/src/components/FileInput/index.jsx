@@ -18,8 +18,8 @@ function FileInput ({ onFilesUpload }) {
       return;
     }
     const filesArray = Array.from(files);
-    setAcceptedFiles(filesArray.filter(file => acceptedFileTypes.includes(file.name.split('.')[1])));
-    setRejectedFiles(filesArray.filter(file => !acceptedFileTypes.includes(file.name.split('.')[1])));
+    setAcceptedFiles(filesArray.filter(file => acceptedFileTypes.includes(`.${file.name.split('.')[1]}`)));
+    setRejectedFiles(filesArray.filter(file => !acceptedFileTypes.includes(`.${file.name.split('.')[1]}`)));
   };
 
   return (
