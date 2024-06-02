@@ -1,0 +1,68 @@
+.mainFlex {
+    width: 51%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--light-accent);
+    margin-left: 15px;
+    margin-top: 30px;
+}
+
+.dropZone {
+    width: 50%;
+    background-color: transparent;
+    border-width: 2px;
+    border-color: var(--custom-fourth);
+    margin-top: 30px;
+}
+
+/* .dragging {
+    width: 50%;
+    background-color: var(--custom-fourth);
+    opacity: 0.6;
+    border-width: 2px;
+    border-color: var(--custom-fourth);
+    margin-top: 30px;
+} */
+
+.dropZoneText {
+    color: var(--light-accent) !important;
+    text-transform: uppercase;
+    font-style: italic;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+}
+
+.dropIcon {
+    color: var(--light-accent) !important;
+    font-size: 1.5rem;
+}
+
+.customButton {
+    background: transparent;
+    color: var(--text-color) !important;
+    font-weight: 400;
+    margin-top: 10px;
+}
+
+.customButton:hover {
+    background: var(--custom-fourth);
+    border-color: transparent;
+    opacity: 0.6;
+    color: var(--text-color);
+}
+
+.miniHeader {
+    align-self: center;
+    color: var(--text-color) !important;
+    font-style: italic;
+    font-size: 1.5rem;
+}
+
+.normalText {
+    color: var(--text-color) !important;
+    font-size: 1rem;
+    text-overflow: ellipsis;
+    width: 250px;
+    overflow: hidden;
+    white-space: nowrap;
+}
