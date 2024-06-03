@@ -69,9 +69,13 @@ WORKDIR /app
 #This ensures that only necessary features are added to the final runtime image.
 COPY --from=build /app/build ./
 #This line specifies that the container will expose port 80
-ENV FRONTEND_IP=${FRONTEND_IP}
-ENV DATABASE_URL=${DATABASE_URL}
-ENV DATABASE_PASSWORD=${DATABASE_PASSWORD}
+ENV MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+ENV AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+ENV AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+ENV S3_BUCKET=${S3_BUCKET}
+ENV APP_DOMAIN=${APP_DOMAIN}
+
 EXPOSE 80
 #Specifies the command to be executed when an object based on this image is started.
 #In this case, it creates .NET Core Web API Application by calling the dotnet server.dll

@@ -8,34 +8,6 @@ namespace CloudStorage.Utils
 {
     public static class VerifyDatabaseEntries
     {
-        //private readonly string _s3Bucket;
-        //private FileStorageDb _db;
-        //private readonly IAmazonS3 _s3;
-
-        //public VerifyDatabaseEntries(string s3Bucket, FileStorageDb db, IAmazonS3 s3)
-        //{
-        //    _s3Bucket = s3Bucket;
-        //    _db = db;
-        //    _s3 = s3;
-        //}
-
-        //public async Task StartAsync(CancellationToken cancellationToken)
-        //{
-        //    await Task.Run(VerifyDatabase, cancellationToken);
-        //    await Task.Run(MigrateDatabase, cancellationToken);
-        //}
-
-        //public Task StopAsync(CancellationToken cancellationToken)
-        //{
-        //    // Clean up if needed
-        //    return Task.CompletedTask;
-        //}
-
-        //private async void MigrateDatabase()
-        //{
-        //    await _db.Database.MigrateAsync();
-        //}
-
         public static async Task VerifyDatabase(string s3Bucket, FileStorageDb db, IAmazonS3 s3)
         {
             List<FileEntry> fileEntries = await db.Files.ToListAsync();

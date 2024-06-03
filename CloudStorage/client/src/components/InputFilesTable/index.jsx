@@ -1,5 +1,4 @@
-import { Button, DropZone, Flex, Text, VisuallyHidden, Table, TableBody,
-  TableCell, TableHead, TableRow, TextField} from '@aws-amplify/ui-react';
+import {Flex, Text, Table, TableBody, TableCell, TableHead, TableRow, TextField} from '@aws-amplify/ui-react';
 
 import { MdCheckCircleOutline, MdOutlineRemoveCircleOutline } from "react-icons/md";
 
@@ -18,22 +17,6 @@ function InputFilesTable({ files, acceptedFileNames, areAccepted, isSingleTable,
           <Text className={`${classes.miniHeader}`}>Rejected files</Text>
         </Flex>
       }
-      {/* <Flex direction="row" alignItems="center" justifyContent="center" width="100%">
-        {areAccepted ?
-          <MdCheckCircleOutline></MdCheckCircleOutline>
-          <Text></Text>
-          "Accepted files" : "Rejected files"
-        }
-      </Flex>
-      <Text className={`${classes.miniHeader}`}>
-        {areAccepted ? 
-          <Flex direction="row" alignItems="center" justifyContent="center" width="100%">
-            <MdCheckCircleOutline></MdCheckCircleOutline>
-            
-          </Flex>
-          "Accepted files" : "Rejected files"
-        }
-      </Text> */}
       <Table highlightOnHover={false} className={`${classes.table}`}>
         <TableHead>
           <TableRow>

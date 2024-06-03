@@ -20,10 +20,6 @@ Env.Load();
 
 builder.Services.AddAuthorization();
 
-//string? awsAccessKeyId = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID");
-//string? awsSecretAccessKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY");
-//string? awsRegion = Environment.GetEnvironmentVariable("AWS_REGION") ?? "us-east-1";
-//string? s3Bucket = Environment.GetEnvironmentVariable("S3_BUCKET");
 string? awsAccessKeyId = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID");
 string? awsSecretAccessKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY");
 string? awsSessionToken = Environment.GetEnvironmentVariable("AWS_SESSION_TOKEN");
@@ -36,24 +32,8 @@ if (string.IsNullOrEmpty(awsAccessKeyId) || string.IsNullOrEmpty(awsSecretAccess
     throw new InvalidOperationException("Not all the environment variables have been set.");
 }
 
-//AWSOptions awsOptions = builder.Configuration.GetAWSOptions();
-//awsOptions.Credentials = new BasicAWSCredentials(awsAccessKeyId, awsSecretAccessKey);
-//awsOptions.Region = Amazon.RegionEndpoint.GetBySystemName(awsRegion);
-
-//var awsCredentials = new BasicAWSCredentials(awsAccessKeyId, awsSecretAccessKey);
-
-//// Create AWS options
-//var awsOptions = new AWSOptions
-//{
-//    Credentials = awsCredentials,
-//    Region = Amazon.RegionEndpoint.GetBySystemName(awsRegion)
-//};
-
-//builder.Services.AddDefaultAWSOptions(awsOptions);
-
 builder.Services.AddSingleton<IAmazonS3>(serviceProvider =>
 {
-    // Create and configure your custom AmazonS3Client instance
     AmazonS3Client s3Client = new AmazonS3Client(
         credentials: new SessionAWSCredentials(
             awsAccessKeyId: awsAccessKeyId,
@@ -63,24 +43,8 @@ builder.Services.AddSingleton<IAmazonS3>(serviceProvider =>
         region: Amazon.RegionEndpoint.GetBySystemName(awsRegion)
     );
 
-    // Return the configured AmazonS3Client instance
     return s3Client;
 });
-
-
-// Loads the AWS Configuration from the appsettings.json into the application’s runtime
-//builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
-
-// Adds the S3 Service into the pipeline
-//builder.Services.AddAWSService<IAmazonS3>(
-//    new AmazonS3Client(
-//        credentials: new SessionAWSCredentials(
-//            awsAccessKeyId: awsAccessKeyId,
-//            awsSecretAccessKey: awsSecretAccessKey,
-//            token: awsSessionToken
-//        ),
-//        region: Amazon.RegionEndpoint.GetBySystemName(awsRegion)
-//);
 
 string? appDomain = Environment.GetEnvironmentVariable("APP_DOMAIN");
 string? databasePort = Environment.GetEnvironmentVariable("DATABASE_PORT");
@@ -90,7 +54,6 @@ string databaseUrl = (databasePort == null) ? $"{appDomain},1433" : $"{appDomain
 string frontendUrl = (frontendPort == null) ? $"http://{appDomain}:3000" : $"http://{appDomain}:{frontendPort}";
 
 string? saPassword = Environment.GetEnvironmentVariable("MSSQL_SA_PASSWORD");
-//string? databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 var connectionString = builder.Configuration.GetConnectionString("FileStorageDb");
 
 if (connectionString != null)
@@ -101,25 +64,12 @@ if (connectionString != null)
 
 builder.Services.AddDbContextPool<FileStorageDb>(options =>
     options.UseSqlServer(connectionString));
-        //sqlServerOptionsAction: sqlOptions =>
-        //{
-        //    sqlOptions.EnableRetryOnFailure();
-        //})
-    //);
 
-//builder.Services.AddHostedService<VerifyDatabaseEntries>(serviceProvider =>
-//{
-//    var db = serviceProvider.GetRequiredService<FileStorageDb>();
-//    var s3 = serviceProvider.GetRequiredService<IAmazonS3>();
-
-//    return new VerifyDatabaseEntries(s3Bucket: s3Bucket, db: db, s3: s3);
-//});
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("reactFrontend", policy =>
     {
-        //string frontend_ip = Environment.GetEnvironmentVariable("APP_FRONTEND") ?? "http://localhost:3000";
         policy.WithOrigins(frontendUrl)
             .AllowAnyHeader()
             .AllowAnyMethod()
@@ -148,7 +98,6 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine($"Startup error: {ex.Message}");
         startupErrorOccurred = true;
     }
-    //dbContext.Database.Migrate();
 }
 
 // Configure the HTTP request pipeline.
@@ -167,8 +116,6 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.UseExceptionHandler("/error");
-
-//app.MapRazorPages();
 
 app.Map("/error", () =>
 {

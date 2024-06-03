@@ -27,21 +27,14 @@ const MainContent = () => {
         const response = await fetch(`${process.env.REACT_APP_BACKEND}/api/files`);
         if (!response.ok) {
           setLoadingState(false);
-          // setDisplayError(true);
-          // setErrorMessage('Failed to fetch files');
-          // throw new Error('Failed to fetch files');
         }
         const data = await response.json();
         setFiles(data);
         setLoadingState(false);
-        // setDisplayError(false);
       } catch (error) {
         setLoadingState(false);
-        // setDisplayError(true);
-        // setErrorMessage(`Error occured while trying to fetch files: ${error}`)
         setUploadMessages([[false, `Error occured while trying to fetch files: ${error}`]]);
         setDisplayMessages(true);
-        // console.error('Error occured while trying to fetch files: ', error);
       }
     }
 
@@ -63,7 +56,6 @@ const MainContent = () => {
           messages.push([false, `File ${fileName} upload failed`])
         }
       } catch (error) {
-        console.error('Error - uploading file:', error);
         messages.push([false, `File ${fileName} upload failed`])
       }
     }
@@ -73,10 +65,8 @@ const MainContent = () => {
       for (let i = 0; i < fileList.length; i++) {
         await uploadFile(fileList[i], acceptedFileNames[i], messages);
       }
-      // fileList.map(file => uploadFile(file, messages));
       setOpenFileUploader(false);
       setUploadMessages(messages);
-      console.log(messages);
       fetchFiles();
       setDisplayMessages(true);
     }
@@ -92,7 +82,7 @@ const MainContent = () => {
     };
 
     function getFileNameFromContentDisposition(contentDisposition) {
-      const start = contentDisposition.indexOf('filename=') + 9; // 9 is the length of 'filename='
+      const start = contentDisposition.indexOf('filename=') + 9;
       const end = contentDisposition.indexOf(';', start);
       let fileName = '';
     
@@ -101,8 +91,7 @@ const MainContent = () => {
       } else {
         fileName = contentDisposition.substring(start);
       }
-    
-      // Remove any surrounding quotes
+  
       fileName = fileName.replace(/['"]/g, '');
     
       return fileName;
@@ -123,7 +112,6 @@ const MainContent = () => {
         // Create a temporary <a> element to trigger the download
         const tempLink = document.createElement("a");
         tempLink.href = url;
-        console.log(response.headers);
         tempLink.setAttribute(
           "download",
           getFileNameFromContentDisposition(response.headers['content-disposition'])
@@ -169,7 +157,7 @@ const MainContent = () => {
           messages.push([false, `Failed to delete file [Id = ${fileId}]`]);
         }
       } catch (error) {
-        messages.push([false, 'Error deleting file [Id = ${fileId}]', error]);
+        messages.push([false, `Error deleting file [Id = ${fileId}]`]);
       }
 
       setUploadMessages(messages);
@@ -202,15 +190,6 @@ const MainContent = () => {
               ))}
             </Flex>
           }
-          {/* {(uploadMessages.length > 0) ?        
-            <Flex direction="column" className={`${classes.overlayStyle}`}>
-              {uploadMessages.map((message, index) => (
-                <Message key={index} colorTheme={message[0] ? 'success' : 'error'} isDismissible={true}>
-                  {message[1]}
-                </Message>
-              ))}
-            </Flex> : null
-          } */}
           <Flex
             direction="row"
             justifyContent="center"
@@ -258,21 +237,6 @@ const MainContent = () => {
             handleDatabaseFileDelete={deleteFile}
           ></FileList>
         </Flex>
-        // <div className="App">
-        //     <header className="App-header">
-        //     <p>
-        //         Edit <code>src/App.js</code> and save to reload.
-        //     </p>
-        //     <a
-        //         className="App-link"
-        //         href="https://reactjs.org"
-        //         target="_blank"
-        //         rel="noopener noreferrer"
-        //     >
-        //         Learn React
-        //     </a>
-        //     </header>
-        // </div>
     );
   }
   

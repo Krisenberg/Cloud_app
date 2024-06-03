@@ -52,7 +52,7 @@ function FileList({ files, isLoading, handleDatabaseFileDownload,
               <Flex direction={"row"} className={`${classes.fileNameChangeRow}`}>
                 <TextField
                   value={newFileName}
-                  onChange={(e) => { setNewFileName(e.target.value); console.log('New val', e.target.value)}}
+                  onChange={(e) => { setNewFileName(e.target.value) }}
                   inputStyles={{
                     color: 'var(--text-color'
                   }}
@@ -70,14 +70,6 @@ function FileList({ files, isLoading, handleDatabaseFileDownload,
                   }
                 />
               </Flex>
-              // <TextField
-              //     value={file.fileName}
-              //     // onChange={(e) => { handleFileNameChange(index, e.target.value)}}
-              //     inputStyles={{
-              //       color: 'var(--text-color'
-              //     }}
-              //     className={`${classes.tableCell}`}
-              //   />
               :
               <TableCell className={`${classes.tableCell}`}>{file.fileName}</TableCell>      
             }
@@ -89,15 +81,6 @@ function FileList({ files, isLoading, handleDatabaseFileDownload,
                 wrap="nowrap"
                 gap="1rem"
               > 
-                {/* {!(modifiedFileIndex === index) ? null :
-                  <Button
-                    onClick={handlefileNameChange}
-                    className={`${classes.buttonSave}`}
-                  >
-                    <MdOutlineSave className={`${classes.iconSave}`}/>
-                    Save
-                  </Button>
-                } */}
                 <MdCloudDownload className={`${classes.actionButton}`} onClick={() => handleDatabaseFileDownload(file.id)}/>
                 <MdDriveFileRenameOutline className={`${classes.actionButton}`} onClick={() => {
                   setModifiedFileIndex((modifiedFileIndex === index) ? null : index)
