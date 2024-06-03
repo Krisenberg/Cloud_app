@@ -14,9 +14,8 @@ const MainContent = () => {
     const [openFileUploader, setOpenFileUploader] = React.useState(false);
     const [files, setFiles] = React.useState([]);
     const [isLoading, setLoadingState] = React.useState(true);
-    const [displayError, setDisplayError] = React.useState(false);
-    const [errorMessage, setErrorMessage] = React.useState('');
     const [uploadMessages, setUploadMessages] = React.useState([]);
+    const [displayMessages, setDisplayMessages] = React.useState(false);
 
     function onFileUploadButton() {
       setOpenFileUploader(!openFileUploader);
@@ -28,25 +27,28 @@ const MainContent = () => {
         const response = await fetch(`${process.env.REACT_APP_BACKEND}/api/files`);
         if (!response.ok) {
           setLoadingState(false);
-          setDisplayError(true);
-          setErrorMessage('Failed to fetch files');
+          // setDisplayError(true);
+          // setErrorMessage('Failed to fetch files');
           // throw new Error('Failed to fetch files');
         }
         const data = await response.json();
         setFiles(data);
         setLoadingState(false);
-        setDisplayError(false);
+        // setDisplayError(false);
       } catch (error) {
         setLoadingState(false);
-        setDisplayError(true);
-        setErrorMessage(`Error occured while trying to fetch files: ${error}`)
+        // setDisplayError(true);
+        // setErrorMessage(`Error occured while trying to fetch files: ${error}`)
+        setUploadMessages([[false, `Error occured while trying to fetch files: ${error}`]]);
+        setDisplayMessages(true);
         // console.error('Error occured while trying to fetch files: ', error);
       }
     }
 
-    async function uploadFile(file, messages) {
+    async function uploadFile(file, fileName, messages) {
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('fileName', fileName);
 
       try {
         const response = await axios.post(`${process.env.REACT_APP_BACKEND}/api/files`, formData, {
@@ -56,48 +58,38 @@ const MainContent = () => {
         });
 
         if (response.status === 201) {
-          messages.push([true, `File ${file.name} uploaded successfully`])
-          // return (
-          //   <Message
-          //     isDismissible={true}
-          //     dismissLabel="Dismiss"
-          //   >
-          //     {`File ${file.name} uploaded successfully`}
-          //   </Message>
-          // )
-          // console.log('File uploaded successfully');
+          messages.push([true, `File ${fileName} uploaded successfully`])
         } else {
-          messages.push([false, `File ${file.name} upload failed`])
-          // return (
-          //   <Message
-          //     isDismissible={true}
-          //     dismissLabel="Dismiss"
-          //   >
-          //     {`File ${file.name} upload failed`}
-          //   </Message>
-          // )
+          messages.push([false, `File ${fileName} upload failed`])
         }
       } catch (error) {
         console.error('Error - uploading file:', error);
-        messages.push([false, `File ${file.name} upload failed`])
-        // return (
-        //   <Message
-        //     isDismissible={true}
-        //     dismissLabel="Dismiss"
-        //   >
-        //     {`File ${file.name} upload failed`}
-        //   </Message>
-        // )
+        messages.push([false, `File ${fileName} upload failed`])
       }
     }
 
-    const handleNewFilesUpload = async (fileList) => {
+    const handleNewFilesUpload = async (fileList, acceptedFileNames) => {
       const messages = [];
-      fileList.map(file => uploadFile(file, messages));
+      for (let i = 0; i < fileList.length; i++) {
+        await uploadFile(fileList[i], acceptedFileNames[i], messages);
+      }
+      // fileList.map(file => uploadFile(file, messages));
       setOpenFileUploader(false);
-      console.log(messages);
       setUploadMessages(messages);
+      console.log(messages);
+      fetchFiles();
+      setDisplayMessages(true);
     }
+
+    const handleMessageDismiss = (index) => {
+      setUploadMessages(prevMessages => {
+        const newMessages = [...prevMessages];
+        newMessages.splice(index, 1);
+        if (newMessages.length === 0)
+          setDisplayMessages(false);
+        return newMessages;
+      });
+    };
 
     function getFileNameFromContentDisposition(contentDisposition) {
       const start = contentDisposition.indexOf('filename=') + 9; // 9 is the length of 'filename='
@@ -147,22 +139,42 @@ const MainContent = () => {
       } catch (error) {
         console.error('Error - downloading file:', error);
       }
+    }
 
-      // try {
-      //   const response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/files/${fileId}`, {
-      //     responseType: 'blob'
-      //   });
+    async function changeFileName(fileId, newFileName) {
+      const messages = [];
+      try {
+        const response = await axios.put(`${process.env.REACT_APP_BACKEND}/api/files/${fileId}`, { Id: fileId, FileName: newFileName });
+        if (response.status === 204) {
+          messages.push([true, `Successfully updated file [${newFileName}]`]);
+        } else {
+          messages.push([false, `Failed to update file name [${newFileName}]`]);
+        }
+      } catch (error) {
+        messages.push([false, 'Error updating file name:', error]);
+      }
 
-      //   const blob = new Blob([response.data], { type: response.headers['content-type'] });
-      //   const link = document.createElement('a');
-      //   link.href = URL.createObjectURL(blob);
-      //   link.download = response.headers['content-disposition'] ? response.headers['content-disposition'].split('filename=')[1] : 'download';
-      //   document.body.appendChild(link);
-      //   link.click();
-      //   document.body.removeChild(link);
-      // } catch (error) {
-      //   console.error('Error - downloading file:', error);
-      // }
+      setUploadMessages(messages);
+      fetchFiles();
+      setDisplayMessages(true);
+    }
+
+    async function deleteFile(fileId) {
+      const messages = [];
+      try {
+        const response = await axios.delete(`${process.env.REACT_APP_BACKEND}/api/files/${fileId}`);
+        if (response.status === 204) {
+          messages.push([true, `Successfully deleted file [Id = ${fileId}]`]);
+        } else {
+          messages.push([false, `Failed to delete file [Id = ${fileId}]`]);
+        }
+      } catch (error) {
+        messages.push([false, 'Error deleting file [Id = ${fileId}]', error]);
+      }
+
+      setUploadMessages(messages);
+      fetchFiles();
+      setDisplayMessages(true);
     }
 
     React.useEffect(() => { fetchFiles(); }, []);
@@ -176,7 +188,21 @@ const MainContent = () => {
           gap="1rem"
           marginTop={50}
         >
-          {(uploadMessages.length > 0) ?        
+          {!displayMessages ? null :
+            <Flex direction="column" className={`${classes.overlayStyle}`}>
+              {uploadMessages.map((message, index) => (
+                <Message
+                  key={index}
+                  colorTheme={message[0] ? 'success' : 'error'}
+                  isDismissible={true}
+                  onDismiss={() => handleMessageDismiss(index)}
+                >
+                  {message[1]}
+                </Message>
+              ))}
+            </Flex>
+          }
+          {/* {(uploadMessages.length > 0) ?        
             <Flex direction="column" className={`${classes.overlayStyle}`}>
               {uploadMessages.map((message, index) => (
                 <Message key={index} colorTheme={message[0] ? 'success' : 'error'} isDismissible={true}>
@@ -184,7 +210,7 @@ const MainContent = () => {
                 </Message>
               ))}
             </Flex> : null
-          }
+          } */}
           <Flex
             direction="row"
             justifyContent="center"
@@ -227,9 +253,9 @@ const MainContent = () => {
           <FileList
             files={files}
             isLoading={isLoading}
-            displayError={displayError}
-            errorMessage={errorMessage}
-            onFileDownload={downloadFile}
+            handleDatabaseFileDownload={downloadFile}
+            handleDatabaseFileNameChange={changeFileName}
+            handleDatabaseFileDelete={deleteFile}
           ></FileList>
         </Flex>
         // <div className="App">

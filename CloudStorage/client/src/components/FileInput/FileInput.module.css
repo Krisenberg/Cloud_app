@@ -1,28 +1,14 @@
 .mainFlex {
     width: 100%;
-    /* border-style: solid;
-    border-width: 1px;
-    border-color: var(--light-accent); */
-    /* margin-left: 15px;
-    margin-top: 30px; */
 }
 
 .dropZone {
-    width: 39%;
+    width: 30%;
     background-color: transparent;
     border-width: 2px;
     border-color: var(--custom-fourth);
     margin-top: 30px;
 }
-
-/* .dragging {
-    width: 50%;
-    background-color: var(--custom-fourth);
-    opacity: 0.6;
-    border-width: 2px;
-    border-color: var(--custom-fourth);
-    margin-top: 30px;
-} */
 
 .dropZoneText {
     color: var(--light-accent) !important;
@@ -30,6 +16,14 @@
     font-style: italic;
     font-size: 1.5rem;
     letter-spacing: 2px;
+}
+
+.divider {
+    width: 30%;
+    border-width: 3px;
+    border-radius: 15px;
+    margin-top: 30px;
+    margin-bottom: 30px;
 }
 
 .dropIcon {
@@ -51,13 +45,6 @@
     color: var(--text-color);
 }
 
-.miniHeader {
-    align-self: center;
-    color: var(--text-color) !important;
-    font-style: italic;
-    font-size: 1.5rem;
-}
-
 .normalText {
     color: var(--text-color) !important;
     font-size: 1rem;
@@ -67,38 +54,17 @@
     white-space: nowrap;
 }
 
-.table {
-    width: 85%;
-    margin-bottom: 10px;
+.buttonSubmit {
+    background: transparent;
+    color: var(--text-color) !important;
+    font-weight: 400;
+    margin: 30px 0 0 0  !important;
+    border-color: var(--green-accept);
 }
 
-.tableHeader {
-    font-size: 1.5rem;
-    color: var(--custom-third);
-}
-
-.tableHeaderSize {
-    font-size: 1.5rem;
-    color: var(--custom-third);
-    text-align: end;
-}
-
-.tableActionsHeader {
-    font-size: 1.5rem;
-    color: var(--custom-third);
-    text-align: end;
-    padding-right: 30px;
-}
-
-.tableCell {
-    font-size: 1rem;
-    color: var(--text-color);
-    overflow: hidden;
-}
-
-.tableCellSize {
-    font-size: 1rem;
-    color: var(--text-color);
-    overflow: hidden;
-    text-align: end;
+.buttonSubmit:hover {
+    background: var(--green-accept);
+    border-color: transparent;
+    opacity: 0.6;
+    color: var(--custom-first) !important;
 }

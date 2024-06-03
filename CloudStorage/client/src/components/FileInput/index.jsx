@@ -1,9 +1,10 @@
 import React from 'react';
 import { MdFileUpload } from 'react-icons/md';
-import { Button, DropZone, Flex, Text, VisuallyHidden, Table, TableBody,
-  TableCell, TableHead, TableRow } from '@aws-amplify/ui-react';
+import { Button, DropZone, Flex, Text, VisuallyHidden, Divider } from '@aws-amplify/ui-react';
 import classes from './FileInput.module.css';
 import '../../styles/App.css';
+
+import InputFilesTable from '../../components/InputFilesTable';
 
 const acceptedFileTypes = ['.png', '.gif', '.jpg', 'jpeg', '.html', '.htm', '.doc', '.docx', '.pdf'];
 
@@ -11,6 +12,8 @@ const acceptedFileTypes = ['.png', '.gif', '.jpg', 'jpeg', '.html', '.htm', '.do
 function FileInput ({ onFilesUpload }) {
   const [acceptedFiles, setAcceptedFiles] = React.useState([]);
   const [rejectedFiles, setRejectedFiles] = React.useState([]);
+  const [acceptedFileNames, setAcceptedFileNames] = React.useState([]);
+
   const hiddenInput = React.useRef(null);
 
   const onFilePickerChange = (event) => {
@@ -21,6 +24,13 @@ function FileInput ({ onFilesUpload }) {
     const filesArray = Array.from(files);
     setAcceptedFiles(filesArray.filter(file => acceptedFileTypes.includes(`.${file.name.split('.')[1]}`)));
     setRejectedFiles(filesArray.filter(file => !acceptedFileTypes.includes(`.${file.name.split('.')[1]}`)));
+    setAcceptedFileNames(filesArray.map(file => file.name));
+  };
+
+  const handleFileNameChange = (index, newName) => {
+    const newFileNames = [...acceptedFileNames];
+    newFileNames[index] = newName;
+    setAcceptedFileNames(newFileNames);
   };
 
   return (
@@ -35,11 +45,9 @@ function FileInput ({ onFilesUpload }) {
         onDropComplete={({ acceptedFiles, rejectedFiles }) => {
           setAcceptedFiles(acceptedFiles);
           setRejectedFiles(rejectedFiles);
+          setAcceptedFileNames(acceptedFiles.map(file => file.name));
         }}
         className={`${classes.dropZone}`}
-        // onDragEnter={setIsDragging(true)}
-        // onDragLeave={setIsDragging(false)}
-        // onDrop={setIsDragging(false)}
       >
         <Flex direction="column" alignItems="center">
           <Flex direction="row" justifyContent="center" alignItems="center">
@@ -61,93 +69,26 @@ function FileInput ({ onFilesUpload }) {
           />
         </VisuallyHidden>
       </DropZone>
-      <Flex direction="row" justifyContent="flex-start" alignItems="flex-start" width="100%" margin="10px">
-        <Flex direction="column" alignItems="center" justifyContent="center" width="50%">
-          {acceptedFiles.length === 0 ? null :
-            <Flex direction="column" alignItems="center" justifyContent="center" width="100%">
-              <Text className={`${classes.miniHeader}`}>Accepted files</Text>
-              <Table highlightOnHover={false} className={`${classes.table}`}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell as="th" className={`${classes.tableHeader}`}>
-                      No
-                    </TableCell>
-                    <TableCell as="th" className={`${classes.tableHeader}`}>
-                      File name
-                    </TableCell>
-                    <TableCell as="th" className={`${classes.tableHeaderSize}`}>
-                      Size [bytes]
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {acceptedFiles.map((file, index) => (
-                    <TableRow key={file.id}>
-                      <TableCell className={`${classes.tableCell}`}>{index + 1}</TableCell>
-                      <TableCell className={`${classes.tableCell}`}>{file.name}</TableCell>
-                      <TableCell className={`${classes.tableCellSize}`}>{file.size}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Flex>
-          }
-          {/* {acceptedFiles.length > 0 ? <Text className={`${classes.miniHeader}`}>Accepted files:</Text> : null}
-          {acceptedFiles.map((file) => (
-            // <Text key={file.name}>{file.name}</Text>
-            // <p class={`${classes.normalText}`}>- {file.name} [{file.size} bytes]</p>
-            <li key={file.path} class={`${classes.normalText}`}>
-              {file.name} [{file.size} bytes]
-            </li>
-          ))} */}
-        </Flex>
-        <Flex direction="column" alignItems="center" justifyContent="center" width="50%">
-          {rejectedFiles.length === 0 ? null :
-            <Flex direction="column" alignItems="center" justifyContent="center" width="100%">
-              <Text className={`${classes.miniHeader}`}>Rejected files</Text>
-              <Table highlightOnHover={false} className={`${classes.table}`}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell as="th" className={`${classes.tableHeader}`}>
-                      No
-                    </TableCell>
-                    <TableCell as="th" className={`${classes.tableHeader}`}>
-                      File name
-                    </TableCell>
-                    <TableCell as="th" className={`${classes.tableHeaderSize}`}>
-                      Size [bytes]
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rejectedFiles.map((file, index) => (
-                    <TableRow key={file.id}>
-                      <TableCell className={`${classes.tableCell}`}>{index + 1}</TableCell>
-                      <TableCell className={`${classes.tableCell}`}>{file.name}</TableCell>
-                      <TableCell className={`${classes.tableCellSize}`}>{file.size}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Flex>
-          }
-        </Flex>
-        {/* <Flex direction="column" alignItems="flex-start" justifyContent="flex-start" width="50%" marginRight="30px">
-          {rejectedFiles.length > 0 ? <Text className={`${classes.miniHeader}`}>Rejected files:</Text> : null}
-          {rejectedFiles.map((file) => (
-            // <Text key={file.name}>{file.name}</Text>
-            <li key={file.path} class={`${classes.normalText}`}>
-              {file.name} [{file.size} bytes]
-            </li>
-          ))}
-        </Flex> */}
-      </Flex>
+      {(acceptedFiles.length > 0 && rejectedFiles.length > 0) ?
+        <Flex direction="row" justifyContent="flex-start" alignItems="flex-start" width="100%" margin="10px">
+          <InputFilesTable files={acceptedFiles} acceptedFileNames={acceptedFileNames} areAccepted={true} isSingleTable={false} handleFileNameChange={handleFileNameChange}></InputFilesTable>
+          <InputFilesTable files={rejectedFiles} acceptedFileNames={acceptedFileNames} areAccepted={false} isSingleTable={false} handleFileNameChange={handleFileNameChange}></InputFilesTable>
+        </Flex> : (
+          (acceptedFiles.length > 0) ?
+            <InputFilesTable files={acceptedFiles} acceptedFileNames={acceptedFileNames} areAccepted={true} isSingleTable={true} handleFileNameChange={handleFileNameChange}></InputFilesTable>
+            : ((rejectedFiles.length > 0) ?
+              <InputFilesTable files={rejectedFiles} acceptedFileNames={acceptedFileNames} areAccepted={false} isSingleTable={true} handleFileNameChange={handleFileNameChange}></InputFilesTable>
+              : null)
+        )
+      }
       <Button
-        className={`${classes.customButton}`}
-        marginBottom="30px"
-        size="large" onClick={() => onFilesUpload(acceptedFiles) }>
+        className={`${classes.buttonSubmit}`}
+        disabled={acceptedFiles.length === 0}
+        marginBottom="15px"
+        size="large" onClick={() => onFilesUpload(acceptedFiles, acceptedFileNames) }>
         Submit
       </Button>
+      <Divider className={`${classes.divider}`}></Divider>
     </Flex>
   );
 }

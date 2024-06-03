@@ -199,14 +199,6 @@ app.MapGet("/api/files", async (FileStorageDb db) =>
     return fileDTOs;
 });
 
-//app.MapPost("/api/files", async (FileEntry file, FileStorageDb db) =>
-//{
-//    db.Files.Add(file);
-//    await db.SaveChangesAsync();
-
-//    return Results.Created($"/files/{file.Id}", file);
-//});
-
 app.MapGet("/api/files/{id}", async (int id, IAmazonS3 s3, FileStorageDb db) =>
 {
     FileEntry? fileEntry = await db.Files.FindAsync(id);
@@ -233,17 +225,6 @@ app.MapGet("/api/files/{id}", async (int id, IAmazonS3 s3, FileStorageDb db) =>
     if (response == null)
         return Results.NotFound("File could not be downloaded from S3 bucket");
 
-    //Stream fileStream = Stream.Null;
-    //using (response)
-    //{
-    //    await response.ResponseStream.Co;
-    //    //var fileStream = response.ResponseStream;
-    //    //var contentType = response.Headers["Content-Type"];
-    //    //var fileName = fileEntry.FileName;
-    //    //return Results.File(fileStream: fileStream, contentType: contentType, fileDownloadName: fileName);
-    //}
-    //var contentType = response.Headers["Content-Type"];
-    //var fileName = fileEntry.FileName;
     return Results.File(
         fileStream: response.ResponseStream,
         contentType: response.Headers["Content-Type"],
@@ -251,8 +232,12 @@ app.MapGet("/api/files/{id}", async (int id, IAmazonS3 s3, FileStorageDb db) =>
     );
 });
 
-app.MapPost("/api/files", async (IFormFile file, IAmazonS3 s3, FileStorageDb db) =>
+app.MapPost("/api/files", async (HttpRequest frontendRequest, IAmazonS3 s3, FileStorageDb db) =>
 {
+    var form = await frontendRequest.ReadFormAsync();
+    var file = form.Files["file"];
+    var customFileName = form["fileName"].ToString();
+
     if (file == null || file.Length == 0)
         return Results.BadRequest(error: "Cannot upload empty file!");
 
@@ -268,7 +253,7 @@ app.MapPost("/api/files", async (IFormFile file, IAmazonS3 s3, FileStorageDb db)
     var response = await s3.PutObjectAsync(request);
     if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
     {
-        var fileEntry = new FileEntry(fileName: file.FileName, s3Key: fileKey);
+        var fileEntry = new FileEntry(fileName: customFileName, s3Key: fileKey);
         db.Files.Add(fileEntry);
         await db.SaveChangesAsync();
 
@@ -277,15 +262,31 @@ app.MapPost("/api/files", async (IFormFile file, IAmazonS3 s3, FileStorageDb db)
     return Results.BadRequest("Couldn't upload this file to AWS S3");
 });
 
-app.MapPut("/files/{id}", async (int id, FileEntry newFileData, FileStorageDb db) =>
+app.MapPut("/api/files/{id}", async (int id, FileDTO newFileData, FileStorageDb db) =>
 {
     var file = await db.Files.FindAsync(id);
 
     if (file is null) return Results.NotFound();
 
     file.FileName = newFileData.FileName;
-    file.S3Key = newFileData.S3Key;
+    await db.SaveChangesAsync();
 
+    return Results.NoContent();
+});
+
+app.MapDelete("/api/files/{id}", async (int id, IAmazonS3 s3, FileStorageDb db) =>
+{
+    var file = await db.Files.FindAsync(id);
+
+    if (file is null) return Results.NotFound();
+
+    await s3.DeleteObjectAsync(new DeleteObjectRequest
+    {
+        BucketName = s3Bucket,
+        Key = file.S3Key
+    });
+
+    db.Files.Remove(file);
     await db.SaveChangesAsync();
 
     return Results.NoContent();

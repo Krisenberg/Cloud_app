@@ -1,52 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { Placeholder, Card, Collection, Table, TableBody,
-  TableCell, TableHead, TableRow, 
-  Flex} from '@aws-amplify/ui-react';
-import { MdCloudDownload, MdDriveFileRenameOutline, MdDeleteOutline } from "react-icons/md";
+import React from 'react';
+import { Placeholder, TextField, Table, TableBody, TableCell, TableHead,
+  TableRow, Flex, Button } from '@aws-amplify/ui-react';
+import { MdCloudDownload, MdDriveFileRenameOutline, MdDeleteOutline, MdOutlineSave } from "react-icons/md";
 import classes from './FileList.module.css';
 
-function FileList({ files, isLoading, displayError, errorMessage, onFileDownload }) {
+function FileList({ files, isLoading, handleDatabaseFileDownload,
+  handleDatabaseFileNameChange, handleDatabaseFileDelete }) {
 
-  // const [files, setFiles] = useState([]);
-  // const [isLoading, setLoadingState] = useState(true);
-  // const [displayError, setDisplayError] = useState(false);
-  // const [errorMessage, setErrorMessage] = useState('');
+  const [modifiedFileIndex, setModifiedFileIndex] = React.useState(null);
+  const [newFileName, setNewFileName] = React.useState(null);
 
-  // async function fetchFiles() {
-  //   setLoadingState(true);
-  //   try {
-  //     const response = await fetch(`${process.env.REACT_APP_BACKEND}/api/files`);
-  //     if (!response.ok) {
-  //       setLoadingState(false);
-  //       setDisplayError(true);
-  //       setErrorMessage('Failed to fetch files');
-  //       // throw new Error('Failed to fetch files');
-  //     }
-  //     const data = await response.json();
-  //     setFiles(data);
-  //     setLoadingState(false);
-  //     setDisplayError(false);
-  //   } catch (error) {
-  //     setLoadingState(false);
-  //     setDisplayError(true);
-  //     setErrorMessage(`Error occured while trying to fetch files: ${error}`)
-  //     // console.error('Error occured while trying to fetch files: ', error);
-  //   }
-  // }
+  const handlefileNameChange = (fileId) => {
+    setModifiedFileIndex(null);
+    handleDatabaseFileNameChange(fileId, newFileName);
+  }
 
-  // useEffect(() => { fetchFiles(); }, []);
+  const handleFileDelete = (fileId) => {
+    const confirmed = window.confirm(`Are you sure you want to delete file with Id: ${fileId}?`);
+    if (confirmed) {
+      handleDatabaseFileDelete(fileId);
+    }
+  }
 
   if (isLoading) {
     return <Placeholder className={`${classes.placeholder}`} />
   }
-  if (displayError) {
-    return (
-      <div>
-        <p color='white'>ERROR</p>
-        <p color='white'>{errorMessage}</p>
-      </div>
-    )   
-  }
+
+  if (files === null || !Array.isArray(files) || files.length === 0)
+    return null;
+
   return (
     <Table highlightOnHover={false} className={`${classes.table}`}>
       <TableHead>
@@ -63,10 +45,42 @@ function FileList({ files, isLoading, displayError, errorMessage, onFileDownload
         </TableRow>
       </TableHead>
       <TableBody>
-        {files.map(file => (
+        {files.map((file, index) => (
           <TableRow key={file.id}>
             <TableCell className={`${classes.tableCell}`}>{file.id}</TableCell>
-            <TableCell className={`${classes.tableCell}`}>{file.fileName}</TableCell>
+            {(modifiedFileIndex === index) ?
+              <Flex direction={"row"} className={`${classes.fileNameChangeRow}`}>
+                <TextField
+                  value={newFileName}
+                  onChange={(e) => { setNewFileName(e.target.value); console.log('New val', e.target.value)}}
+                  inputStyles={{
+                    color: 'var(--text-color'
+                  }}
+                  className={`${classes.textInput}`}
+                  innerEndComponent={
+                    <>
+                      <Button
+                        onClick={() => handlefileNameChange(file.id)}
+                        className={`${classes.buttonSave}`}
+                      >
+                        <MdOutlineSave className={`${classes.iconSave}`}/>
+                        Save
+                      </Button>
+                    </>
+                  }
+                />
+              </Flex>
+              // <TextField
+              //     value={file.fileName}
+              //     // onChange={(e) => { handleFileNameChange(index, e.target.value)}}
+              //     inputStyles={{
+              //       color: 'var(--text-color'
+              //     }}
+              //     className={`${classes.tableCell}`}
+              //   />
+              :
+              <TableCell className={`${classes.tableCell}`}>{file.fileName}</TableCell>      
+            }
             <TableCell className={`${classes.tableCell}`}>
               <Flex
                 direction="row"
@@ -74,44 +88,28 @@ function FileList({ files, isLoading, displayError, errorMessage, onFileDownload
                 alignContent="flex-end"
                 wrap="nowrap"
                 gap="1rem"
-              >
-                <MdCloudDownload className={`${classes.actionButton}`} onClick={() => onFileDownload(file.id)}/>
-                <MdDriveFileRenameOutline className={`${classes.actionButton}`}/>
-                <MdDeleteOutline className={`${classes.actionButton}`}/>
+              > 
+                {/* {!(modifiedFileIndex === index) ? null :
+                  <Button
+                    onClick={handlefileNameChange}
+                    className={`${classes.buttonSave}`}
+                  >
+                    <MdOutlineSave className={`${classes.iconSave}`}/>
+                    Save
+                  </Button>
+                } */}
+                <MdCloudDownload className={`${classes.actionButton}`} onClick={() => handleDatabaseFileDownload(file.id)}/>
+                <MdDriveFileRenameOutline className={`${classes.actionButton}`} onClick={() => {
+                  setModifiedFileIndex((modifiedFileIndex === index) ? null : index)
+                  setNewFileName(file.fileName)
+                }}></MdDriveFileRenameOutline>
+                <MdDeleteOutline className={`${classes.actionButton}`} onClick={() => handleFileDelete(file.id)}/>
               </Flex>
             </TableCell>
           </TableRow>
         ))}
       </TableBody>
     </Table>
-    // <Collection
-    //   items={files}
-    //   type="list"
-    //   direction="column"
-    //   gap="20px"
-    //   wrap="nowrap"
-    // >
-    //   {(item, index) => (
-    //     <Card
-    //       key={index}
-    //       borderRadius="medium"
-    //       maxWidth="20rem"
-    //       variation="elevated"
-    //       boxShadow="large"
-    //       className={`${classes.fileCard}`}
-    //     >
-
-    //     </Card>
-    //   )}    
-    // </Collection>
-    // <div>
-    //   {files.map(file => (
-    //     <div key={file.id}>
-    //       <p>File ID: {file.id}</p>
-    //       <p>File Name: {file.fileName}</p>
-    //     </div>
-    //   ))}
-    // </div>
   );
 }
 

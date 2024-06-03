@@ -1,0 +1,53 @@
+
+.table {
+    width: 85%;
+    margin-bottom: 10px;
+}
+
+.tableHeader {
+    font-size: 1.5rem;
+    color: var(--custom-third);
+}
+
+.tableHeaderSize {
+    font-size: 1.5rem;
+    color: var(--custom-third);
+    text-align: end;
+}
+
+.tableActionsHeader {
+    font-size: 1.5rem;
+    color: var(--custom-third);
+    text-align: end;
+    padding-right: 30px;
+}
+
+.tableCell {
+    font-size: 1rem;
+    color: var(--text-color);
+    overflow: hidden;
+}
+
+.tableCellSize {
+    font-size: 1rem;
+    color: var(--text-color);
+    overflow: hidden;
+    text-align: end;
+}
+
+.miniHeader {
+    align-self: center;
+    color: var(--text-color) !important;
+    font-weight: 350;
+    font-size: 1.5rem;
+}
+
+.iconAccept {
+    font-size: 1.5rem;
+    color: var(--green-accept);
+}
+
+.iconDeny {
+    font-size: 1.5rem;
+    color: var(--red-deny);
+}

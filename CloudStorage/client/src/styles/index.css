@@ -5,6 +5,8 @@
   --custom-fourth: #FF4C29;
   --text-color: #EEEEEE;
   --light-accent: #787A91;
+  --green-accept: #9DDE8B;
+  --red-deny: #B33030;
 }
 
 body {

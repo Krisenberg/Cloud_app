@@ -19,6 +19,10 @@
     margin-bottom: 100px;
 }
 
+.noRow {
+    width: 10%;
+}
+
 .tableHeader {
     font-size: 1.5rem;
     color: var(--custom-third);
@@ -34,4 +38,31 @@
 .tableCell {
     font-size: 1rem;
     color: var(--text-color);
+}
+
+.fileNameChangeRow {
+    width: 100%;
+}
+
+.textInput {
+    width: 100%;
+}
+
+.buttonSave {
+    background: transparent;
+    color: var(--text-color) !important;
+    font-weight: 400;
+    border-color: var(--green-accept);
+}
+
+.buttonSave:hover {
+    background: var(--green-accept);
+    border-color: transparent;
+    opacity: 0.6;
+    color: var(--custom-first) !important;
+}
+
+.iconSave {
+    font-size: 1.5rem;
+    margin-right: 10px;
 }
