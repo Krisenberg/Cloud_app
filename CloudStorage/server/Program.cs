@@ -3,16 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using CloudStorage;
 using CloudStorage.Models;
 using DotNetEnv;
-using Microsoft.AspNetCore.Builder;
-using Amazon.Extensions.NETCore.Setup;
 using Amazon.Runtime;
 using Amazon.S3.Model;
-using System.IO;
-using Microsoft.AspNetCore.Hosting;
 using CloudStorage.Utils;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http.HttpResults;
-using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 

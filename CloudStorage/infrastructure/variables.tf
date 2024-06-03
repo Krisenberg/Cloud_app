@@ -16,6 +16,17 @@ variable "port_frontend" {
   default     = 3000
 }
 
+variable "mssql_sa_password" {
+  description = "Password used when logging to the MS SQL database"
+  type        = string
+}
+
+variable "s3_bucket" {
+  description = "Name of the AWS S3 bucket"
+  type        = string
+  default     = "cloud-storage-bucket"
+}
+
 variable "credentials_profile" {
   description = "Please provide the credentials profile's name. Default = default"
   type        = string
@@ -28,14 +39,14 @@ variable "ssh_key" {
   default     = "s3-storage-key"
 }
 
-variable "mssql_sa_password" {
-  description = "Password used when logging to the MS SQL database"
-  type        = string
-  default     = "A&VeryComplex123Password"
+variable "aws_access_key_id" {
+  type = string
 }
 
-variable "s3_bucket_name" {
-  description = "Name of the AWS S3 bucket"
-  type        = string
-  default     = "cloud-storage-bucket"
+variable "aws_secret_access_key" {
+  type = string
+}
+
+variable "aws_session_token" {
+  type = string
 }

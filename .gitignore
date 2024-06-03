@@ -707,3 +707,7 @@ node_modules
 **/compose/
 
 *.zip
+
+CloudStorage/temp.sh
+CloudStorage/infrastructure/variables_plain_text.txt
+CloudStorage/infrastructure/modules/ec2/deployment.sh

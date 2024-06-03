@@ -11,7 +11,7 @@ resource "aws_vpc" "s3_storage_vpc" {
 # Attach an Internet gateway to make the instance visible from outside
 resource "aws_internet_gateway" "s3_storage_gateway" {
   vpc_id = aws_vpc.s3_storage_vpc.id
-  tags = {
+  tags   = {
     Name = "s3_storage_gateway"
   }
 }

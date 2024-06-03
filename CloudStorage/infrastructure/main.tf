@@ -28,18 +28,21 @@ module "network" {
 # Attach the s3 bucket using `s3` module
 module "s3" {
   source            = "./modules/s3/"
-  s3_bucket_name    = var.s3_bucket_name
+  s3_bucket_name    = var.s3_bucket
 }
 
 # Attach the whole instance config using Elastic Beanstalk (configuration defined in the `elastic_beanstalk` module)
 module "ec2" {
   source                      = "./modules/ec2/"
-  vpc_id                      = module.network.vpc_id
   subnet_id                   = module.network.subnet_id
   security_group_id           = module.network.security_group_id
   port_database               = var.port_database
+  mssql_sa_password           = var.mssql_sa_password
   port_backend                = var.port_backend
   port_frontend               = var.port_frontend
-  mssql_sa_password           = var.mssql_sa_password
+  aws_access_key_id           = var.aws_access_key_id
+  aws_secret_access_key       = var.aws_secret_access_key
+  aws_session_token           = var.aws_session_token
+  s3_bucket                   = var.s3_bucket
   ssh_key                     = var.ssh_key
 }

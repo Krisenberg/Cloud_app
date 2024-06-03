@@ -1,4 +1,32 @@
-variable "vpc_id" {
+variable "port_database" {
+  type = number
+}
+
+variable "mssql_sa_password" {
+    type = string
+}
+
+variable "port_backend" {
+  type = number
+}
+
+variable "port_frontend" {
+  type = number
+}
+
+variable "aws_access_key_id" {
+  type = string
+}
+
+variable "aws_secret_access_key" {
+  type = string
+}
+
+variable "aws_session_token" {
+  type = string
+}
+
+variable "s3_bucket" {
   type = string
 }
 
@@ -10,30 +38,6 @@ variable "security_group_id" {
   type = string
 }
 
-variable "port_database" {
-  type = number
-}
-
-variable "port_backend" {
-  type = number
-}
-
-variable "port_frontend" {
-  type = number
-}
-
 variable "ssh_key" {
   type = string
 }
-
-variable "mssql_sa_password" {
-    type = string
-}
-
-# locals {
-#   env_vars = {
-#     REACT_APP_COGNITO_REGION              = var.cognito_region
-#     REACT_APP_COGNITO_USER_POOL_CLIENT_ID = var.cognito_user_pool_client_id
-#     REACT_APP_COGNITO_USER_POOL_ID        = var.cognito_user_pool_id
-#   }
-# }

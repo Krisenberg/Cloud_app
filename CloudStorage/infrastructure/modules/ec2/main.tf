@@ -1,8 +1,15 @@
 resource "local_file" "deployment_compose" {
   content = templatefile("${path.module}/deployment_template.sh",
     {
+      port_database=var.port_database
       mssql_sa_password=var.mssql_sa_password
-      database_url=aws_instance.s3_storage.public_ip
+      port_backend=var.port_backend
+      port_frontend=var.port_frontend
+      aws_access_key_id=var.aws_access_key_id
+      aws_secret_access_key=var.aws_secret_access_key
+      aws_session_token=var.aws_session_token
+      s3_bucket=var.s3_bucket
+      app_domain=aws_instance.s3_storage.public_ip
     }
   )
   filename = "${path.module}/deployment.sh"
