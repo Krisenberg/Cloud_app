@@ -1,14 +1,14 @@
 .mainFlex {
-    width: 60%;
-    border-style: solid;
+    width: 100%;
+    /* border-style: solid;
     border-width: 1px;
-    border-color: var(--light-accent);
+    border-color: var(--light-accent); */
     /* margin-left: 15px;
     margin-top: 30px; */
 }
 
 .dropZone {
-    width: 50%;
+    width: 39%;
     background-color: transparent;
     border-width: 2px;
     border-color: var(--custom-fourth);
@@ -65,4 +65,40 @@
     width: 250px;
     overflow: hidden;
     white-space: nowrap;
+}
+
+.table {
+    width: 85%;
+    margin-bottom: 10px;
+}
+
+.tableHeader {
+    font-size: 1.5rem;
+    color: var(--custom-third);
+}
+
+.tableHeaderSize {
+    font-size: 1.5rem;
+    color: var(--custom-third);
+    text-align: end;
+}
+
+.tableActionsHeader {
+    font-size: 1.5rem;
+    color: var(--custom-third);
+    text-align: end;
+    padding-right: 30px;
+}
+
+.tableCell {
+    font-size: 1rem;
+    color: var(--text-color);
+    overflow: hidden;
+}
+
+.tableCellSize {
+    font-size: 1rem;
+    color: var(--text-color);
+    overflow: hidden;
+    text-align: end;
 }

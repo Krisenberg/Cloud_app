@@ -82,8 +82,15 @@ builder.Services.AddSingleton<IAmazonS3>(serviceProvider =>
 //        region: Amazon.RegionEndpoint.GetBySystemName(awsRegion)
 //);
 
+string? appDomain = Environment.GetEnvironmentVariable("APP_DOMAIN");
+string? databasePort = Environment.GetEnvironmentVariable("DATABASE_PORT");
+string? frontendPort = Environment.GetEnvironmentVariable("FRONTEND_PORT");
+
+string databaseUrl = (databasePort == null) ? $"{appDomain},1433" : $"{appDomain},{databasePort}";
+string frontendUrl = (frontendPort == null) ? $"http://{appDomain}:3000" : $"http://{appDomain}:{frontendPort}";
+
 string? saPassword = Environment.GetEnvironmentVariable("MSSQL_SA_PASSWORD");
-string? databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+//string? databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 var connectionString = builder.Configuration.GetConnectionString("FileStorageDb");
 
 if (connectionString != null)
@@ -112,8 +119,8 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("reactFrontend", policy =>
     {
-        string frontend_ip = Environment.GetEnvironmentVariable("APP_FRONTEND") ?? "http://localhost:3000";
-        policy.WithOrigins(frontend_ip)
+        //string frontend_ip = Environment.GetEnvironmentVariable("APP_FRONTEND") ?? "http://localhost:3000";
+        policy.WithOrigins(frontendUrl)
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials()
@@ -125,12 +132,22 @@ var app = builder.Build();
 
 app.UseCors("reactFrontend");
 
+bool startupErrorOccurred = false;
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<FileStorageDb>();
     var s3Service = scope.ServiceProvider.GetRequiredService<IAmazonS3>();
-    dbContext.Database.Migrate();
-    await VerifyDatabaseEntries.VerifyDatabase(s3Bucket, dbContext, s3Service);
+    try
+    {
+        dbContext.Database.Migrate();
+        await VerifyDatabaseEntries.VerifyDatabase(s3Bucket, dbContext, s3Service);
+    }
+    catch (Exception ex)
+    {
+        // Log the exception
+        Console.WriteLine($"Startup error: {ex.Message}");
+        startupErrorOccurred = true;
+    }
     //dbContext.Database.Migrate();
 }
 
@@ -156,6 +173,20 @@ app.UseExceptionHandler("/error");
 app.Map("/error", () =>
 {
     return Results.Problem(detail: "Internal server error", statusCode: 500);
+});
+
+if (startupErrorOccurred)
+{
+    app.Map("/", context =>
+    {
+        context.Response.Redirect("/startup-error");
+        return Task.CompletedTask;
+    });
+}
+
+app.Map("/startup-error", () =>
+{
+    return Results.Problem(detail: "Error occurred during startup", statusCode: 500);
 });
 
 app.MapGet("/test", () => "Example response - this endpoint is working!");

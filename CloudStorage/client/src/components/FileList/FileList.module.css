@@ -1,5 +1,8 @@
 .placeholder {
     width: 60%;
+    height: 100px;
+    --amplify-components-placeholder-start-color: var(--custom-second);
+    --amplify-components-placeholder-end-color: var(--custom-second);
 }
 
 .actionButton{
@@ -13,6 +16,7 @@
 
 .table {
     width: 60%;
+    margin-bottom: 100px;
 }
 
 .tableHeader {

@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import { Flex, Heading, DropZone, Button, Message } from '@aws-amplify/ui-react';
+import { Flex, Heading, Button, Message } from '@aws-amplify/ui-react';
 import { MdCloudUpload, MdRefresh } from "react-icons/md";
 import logo from '../../logo.svg';
 import '../../styles/App.css';
